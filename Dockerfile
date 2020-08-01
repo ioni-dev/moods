@@ -7,6 +7,10 @@ ADD . ./
 # setting permissions on source code
 RUN sudo chown -R rust:rust /home/rust
 
+# RUN apt-get install openssl libssl-dev clang llvm-dev libclang-dev
+# RUN apt-get clean
+
+
 # Build our application
 RUN cargo build --release
 
