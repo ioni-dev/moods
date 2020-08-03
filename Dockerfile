@@ -1,23 +1,16 @@
-# Build environment
-FROM ekidd/rust-musl-builder:latest AS builder
+FROM rust:1.45.1 as build
+ENV PKG_CONFIG_ALLOW_CROSS=1
 
-# Add our source code
-ADD . ./
+WORKDIR /usr/src/moods-api-service
+COPY . .
 
-# setting permissions on source code
-RUN sudo chown -R rust:rust /home/rust
+RUN apt-get update && apt-get -y install \
+    openssl libssl-dev clang llvm-dev libclang-dev
 
-# RUN apt-get install openssl libssl-dev clang llvm-dev libclang-dev
-# RUN apt-get clean
+RUN cargo install --path .
 
+FROM gcr.io/distroless/cc-debian10
 
-# Build our application
-RUN cargo build --release
+COPY --from=build  /usr/local/cargo/bin/moods /usr/src/moods-api-service
 
-# Building docker container
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-COPY --from=builder \
-    /home/rust/src/target/x86_64-unknown-linux-musl/release/moods \
-    /usr/local/bin
-CMD /usr/local/bin/moods
+CMD ["moods"]

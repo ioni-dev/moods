@@ -9,9 +9,12 @@ services:
       POSTGRES_DB: moodsdb
     ports:
       - 5432:5432
-  # web:
-  #   build: .
-  #   volumes: .:/moods
-  #   command: cargo run
-  #   depends_on:
-  #     - db
+  web:
+    build: .
+    volumes:
+      - /moods
+    command: cargo run
+    env_file:
+      - '.env'
+    depends_on:
+      - postgres
