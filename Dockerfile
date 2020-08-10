@@ -10,7 +10,6 @@ RUN apt-get update && apt-get -y install \
 RUN cargo install --path .
 
 FROM gcr.io/distroless/cc-debian10
-
 COPY --from=build  /usr/local/cargo/bin/moods /usr/src/moods-api-service
 
-CMD ["moods"]
+CMD ["./cargo", "run"]

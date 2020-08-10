@@ -4,17 +4,16 @@ services:
     image: postgres:11-alpine
     restart: always
     environment:
-      POSTGRES_PASSWORD: secret
-      POSTGRES_USER: admin
-      POSTGRES_DB: moodsdb
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=moodsdb
     ports:
       - 5432:5432
-  web:
-    build: .
-    volumes:
-      - /moods
-    command: cargo run
-    env_file:
-      - '.env'
-    depends_on:
-      - postgres
+  # web:
+  #   build: .
+  #   volumes:
+  #     - .:/moods
+  #   env_file:
+  #     - '.env'
+  #   depends_on:
+  #     - postgres
