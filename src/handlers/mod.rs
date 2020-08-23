@@ -1,5 +1,6 @@
 mod auth;
 mod user;
+mod event;
 
 use crate::errors::AppError;
 use actix_web::{web, HttpResponse};
@@ -17,6 +18,9 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let me = web::resource("/me")
         .route(web::get().to(me))
         .route(web::post().to(update_profile));
+
+    // event related
+    let eventList = Web::resource("/events").route(web::get().to(get_all_events));
 
     config.service(signup).service(auth).service(me);
 }
