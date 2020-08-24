@@ -1,11 +1,18 @@
 use super::{auth::AuthenticatedUser, AppResponse};
 use crate::{
-    db,
     config::crypto::CryptoService,
+    db,
     db::event::EventRepository,
     errors::AppError,
     models::event::{Event, NewEvent, UpdateEvent},
 };
+use actix_web::{
+    web::{Data, Json},
+    HttpResponse,
+};
+use color_eyre::Result;
+// use sqlx::{error::DatabaseError, postgres::PgError};
+use tracing::{debug, instrument};
 
 #[instrument[skip(repository)]]
 pub async fn get_all_events(user: AuthenticatedUser, repository: EventRepository) -> AppResponse {

@@ -1,7 +1,7 @@
 use super::{auth::AuthenticatedUser, AppResponse};
 use crate::{
-    db,
     config::crypto::CryptoService,
+    db,
     db::user::UserRepository,
     errors::AppError,
     models::user::{NewUser, UpdateProfile, User},
@@ -57,13 +57,13 @@ pub async fn create_user(
             let error = match (pg_error.code(), pg_error.column_name()) {
                 (Some(db::UNIQUE_VIOLATION_CODE), Some("email")) => {
                     AppError::INVALID_INPUT.message("Email address already exists.".to_string())
-                },
+                }
                 (Some(db::UNIQUE_VIOLATION_CODE), Some("username")) => {
                     AppError::INVALID_INPUT.message("Username already exists.".to_string())
-                },
+                }
                 (Some(db::UNIQUE_VIOLATION_CODE), None) => {
                     AppError::INVALID_INPUT.message("Username or email already exists.".to_string())
-                },
+                }
                 _ => {
                     debug!("Error creating user. {:?}", pg_error);
                     AppError::INTERNAL_ERROR.into()

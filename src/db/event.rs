@@ -23,12 +23,29 @@ impl EventRepository {
 
     #[instrument(skip(self))]
     pub async fn get_all(&self, id: Uuid) -> Result<Option<Event>> {
-        let all_events = sqlx::query_as::<_, Event>("select * from user_events where id = $1")
+        let all_events = sqlx::query_as::<_, Event>("select * from event where id = $1")
             .bind(id)
             .fetch_optional(&*self.pool)
             .await?;
 
         Ok(all_events)
     }
+}
 
+impl FromRequest for EventRepository {
+    type Error = AppError;
+    type Future = Ready<Result<Self, Self::Error>>;
+    type Config = ();
+    #[instrument(skip(req, payload))]
+    fn from_request(
+        req: &actix_web::HttpRequest,
+        payload: &mut actix_web::dev::Payload,
+    ) -> Self::Future {
+        let pool_result = Data::<PgPool>::from_request(req, payload).into_inner();
+
+        match pool_result {
+            Ok(pool) => ready(Ok(EventRepository::new(pool.deref().clone()))),
+            _ => ready(Err(AppError::NOT_AUTHORIZED.default())),
+        }
+    }
 }
