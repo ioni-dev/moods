@@ -19,8 +19,12 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .route(web::get().to(me))
         .route(web::post().to(update_profile));
 
-    // event related
-    let eventList = web::resource("/events").route(web::get().to(get_all_events));
+    // events related to user
+    let all_events = web::resource("/events").route(web::get().to(get_all_events));
 
-    config.service(signup).service(auth).service(me);
+    config
+        .service(signup)
+        .service(auth)
+        .service(me)
+        .service(all_events);
 }
