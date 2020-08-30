@@ -26,33 +26,46 @@ impl UserRepository {
         let password_hash = hashing.hash_password(new_user.password).await?;
 
         let user = sqlx::query_as::<_, User>(
-            "insert into users (username, email, password_hash) values ($1, $2, $3) returning *",
+            "insert into users (name, email, password_hash) values ($1, $2, $3) returning *",
         )
-        .bind(new_user.username)
+        .bind(new_user.name)
         .bind(new_user.email)
+        .bind(password_hash)
+        .fetch_one(&*self.pool)
+        .await?;
+
+        println!("{:?}", user);
+        Ok(user)
+    }
+
+    #[instrument(skip(self, profile, hashing))]
+    pub async fn update_profile(&self, user_id: Uuid, profile: UpdateProfile, hashing: &CryptoService) -> Result<User> {
+        // check if passwords are the same
+        // let valid = hashing
+        // .verify_password(password, &user.password_hash)
+        // .await?;
+
+
+        // NOTE: need to implement the password hashing correctly
+        // let password_v = profile.password_hash.get_or_insert_with(|| String::from("default"));
+
+        // let password_hash = hashing.hash_password(password_v).await?;
+
+        let user = sqlx::query_as::<_, User>(
+            "update users set name = $2, password_hash = $3 where id = $1 returning *",
+        )
+        .bind(user_id)
+        .bind(profile.name)
         .bind(password_hash)
         .fetch_one(&*self.pool)
         .await?;
         Ok(user)
     }
 
-    pub async fn update_profile(&self, user_id: Uuid, profile: UpdateProfile) -> Result<User> {
-        let user = sqlx::query_as::<_, User>(
-            "update users set full_name = $2, bio = $3, image = $4 where id = $1 returning *",
-        )
-        .bind(user_id)
-        .bind(profile.full_name)
-        .bind(profile.bio)
-        .bind(profile.image)
-        .fetch_one(&*self.pool)
-        .await?;
-        Ok(user)
-    }
-
     #[instrument(skip(self))]
-    pub async fn find_by_username(&self, username: &str) -> Result<Option<User>> {
-        let maybe_user = sqlx::query_as::<_, User>("select * from users where username = $1")
-            .bind(username)
+    pub async fn find_by_username(&self, name: &str) -> Result<Option<User>> {
+        let maybe_user = sqlx::query_as::<_, User>("select * from users where name = $1")
+            .bind(name)
             .fetch_optional(&*self.pool)
             .await?;
 

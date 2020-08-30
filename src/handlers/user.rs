@@ -26,8 +26,8 @@ pub async fn create_user(
         Err(errors) => {
             let error_map = errors.field_errors();
 
-            let message = if error_map.contains_key("username") {
-                format!("Invalid username. \"{}\" is too short.", user.username)
+            let message = if error_map.contains_key("name") {
+                format!("Invalid user name. \"{}\" is too short.", user.name)
             } else if error_map.contains_key("email") {
                 format!("Invalid email address \"{}\"", user.email)
             } else if error_map.contains_key("password") {
@@ -58,11 +58,11 @@ pub async fn create_user(
                 (Some(db::UNIQUE_VIOLATION_CODE), Some("email")) => {
                     AppError::INVALID_INPUT.message("Email address already exists.".to_string())
                 }
-                (Some(db::UNIQUE_VIOLATION_CODE), Some("username")) => {
-                    AppError::INVALID_INPUT.message("Username already exists.".to_string())
+                (Some(db::UNIQUE_VIOLATION_CODE), Some("name")) => {
+                    AppError::INVALID_INPUT.message("name already exists.".to_string())
                 }
                 (Some(db::UNIQUE_VIOLATION_CODE), None) => {
-                    AppError::INVALID_INPUT.message("Username or email already exists.".to_string())
+                    AppError::INVALID_INPUT.message("name or email already exists.".to_string())
                 }
                 _ => {
                     debug!("Error creating user. {:?}", pg_error);
@@ -74,11 +74,12 @@ pub async fn create_user(
     }
 }
 
-#[instrument(skip(repository))]
+#[instrument(skip(repository, crypto_service))]
 pub async fn update_profile(
     user: AuthenticatedUser,
     repository: UserRepository,
     profile: Json<UpdateProfile>,
+    crypto_service: Data<CryptoService>,
 ) -> AppResponse {
     match profile.validate() {
         Ok(_) => Ok(()),
@@ -87,8 +88,8 @@ pub async fn update_profile(
 
             let message = if error_map.contains_key("image") {
                 format!(
-                    "Invalid image. \"{}\" is not a valid url.",
-                    profile.image.as_deref().unwrap()
+                    "Invalid image.is not a valid url.",
+
                 )
             } else {
                 "Invalid input.".to_string()
@@ -98,13 +99,14 @@ pub async fn update_profile(
         }
     }?;
 
-    let user = repository.update_profile(user.0, profile.0).await?;
+    let user = repository.update_profile(user.0, profile.0,  crypto_service.as_ref()).await?;
 
     Ok(HttpResponse::Ok().json(user))
 }
 
 #[instrument[skip(repository)]]
-pub async fn me(user: AuthenticatedUser, repository: UserRepository) -> AppResponse {
+pub async fn profile(user: AuthenticatedUser, repository: UserRepository) -> AppResponse {
+    format!("cheking profile {:?}", user);
     let user = repository
         .find_by_id(user.0)
         .await?

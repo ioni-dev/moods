@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE "public"."places"
+CREATE TABLE "places"
 (
  "id"          uuid DEFAULT uuid_generate_v4(),
  "street"      varchar NOT NULL,
@@ -12,7 +12,8 @@ CREATE TABLE "public"."places"
  "longitude"   double precision NULL,
  "created_at"  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "event_id"    uuid NOT NULL,
+ "event_id"    uuid  NULL,
+
  CONSTRAINT "PK_place" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_event_on_places" FOREIGN KEY ( "event_id" ) REFERENCES "public"."events" ( "id" )
 );

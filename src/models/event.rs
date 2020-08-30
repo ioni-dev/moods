@@ -38,8 +38,9 @@ pub struct NewEvent {
     pub name: String,
     #[validate(length(min = 3))]
     pub description: String,
-    #[serde(skip_serializing)]
-    pub category: EventCategory,
+    pub category_tag: String,
+    pub active: bool,
+
 }
 
 #[derive(Debug, Deserialize, Validate)]

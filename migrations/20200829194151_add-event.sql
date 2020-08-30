@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "events"
 (
- "id"          uuid DEFAULT uuid_generate_v4(),
+ "id"              uuid DEFAULT uuid_generate_v4(),
  "name"            varchar NOT NULL,
  "description"     varchar NOT NULL,
  "category_tag"    varchar NOT NULL,
@@ -10,9 +10,10 @@ CREATE TABLE "events"
  "organization_id" uuid NOT NULL,
  "start_date"      date NULL,
  "end_date"        date NULL,
- "created_at"  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "updated_at"  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "event_id"    uuid NOT NULL,
+ "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ "event_id"        uuid  NULL,
+
  CONSTRAINT "PK_event" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
 );

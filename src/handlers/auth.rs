@@ -61,7 +61,7 @@ pub async fn auth(
     repository: UserRepository,
     hashing: Data<CryptoService>,
 ) -> AppResponse {
-    let username = basic.user_id();
+    let name = basic.user_id();
     let password = basic
         .password()
         .ok_or_else(|| {
@@ -70,7 +70,7 @@ pub async fn auth(
         })?;
 
     let user = repository
-        .find_by_username(username)
+        .find_by_username(name)
         .await?
         .ok_or_else(|| {
             debug!("User doesn't exist.");

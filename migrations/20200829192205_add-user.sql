@@ -10,12 +10,12 @@ CREATE TABLE "users"
  "active"          boolean NOT NULL default true,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "organization_id" uuid NOT NULL,
+ "organization_id" uuid  NULL,
  CONSTRAINT "PK_user" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
 );
 
-CREATE INDEX "fkIdx_organization" ON "users"
+CREATE INDEX "fkIdx_organization_on_users" ON "users"
 (
  "organization_id"
 );

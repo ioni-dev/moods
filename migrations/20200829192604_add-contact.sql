@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE "public"."contacts"
+CREATE TABLE "contacts"
 (
  "id"                uuid DEFAULT uuid_generate_v4(),
  "first_name"        varchar NOT NULL,
@@ -21,7 +21,8 @@ CREATE TABLE "public"."contacts"
  "last_consulted_at" date NULL,
  "created_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "organization_id"   uuid NOT NULL,
+ "organization_id"   uuid  NULL,
+
  CONSTRAINT "PK_contact" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
 );
