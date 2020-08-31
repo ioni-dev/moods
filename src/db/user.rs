@@ -39,12 +39,16 @@ impl UserRepository {
     }
 
     #[instrument(skip(self, profile, hashing))]
-    pub async fn update_profile(&self, user_id: Uuid, profile: UpdateProfile, hashing: &CryptoService) -> Result<User> {
+    pub async fn update_profile(
+        &self,
+        user_id: Uuid,
+        profile: UpdateProfile,
+        hashing: &CryptoService,
+    ) -> Result<User> {
         // check if passwords are the same
         // let valid = hashing
         // .verify_password(password, &user.password_hash)
         // .await?;
-
 
         // NOTE: need to implement the password hashing correctly
         // let password_v = profile.password_hash.get_or_insert_with(|| String::from("default"));
@@ -56,7 +60,7 @@ impl UserRepository {
         )
         .bind(user_id)
         .bind(profile.name)
-        .bind(password_hash)
+        .bind(profile.password_hash)
         .fetch_one(&*self.pool)
         .await?;
         Ok(user)
