@@ -6,7 +6,7 @@ mod user;
 use crate::errors::AppError;
 use actix_web::{web, HttpResponse};
 use auth::auth;
-use contact::get_all_contacts;
+use contact::{get_all_contacts, create_contact};
 use event::get_all_events;
 use user::{create_user, profile, update_profile};
 type AppResult<T> = Result<T, AppError>;
@@ -28,11 +28,12 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let all_events = web::resource("/events").route(web::get().to(get_all_events));
 
     let all_contacts = web::resource("/contacts").route(web::get().to(get_all_contacts));
-
+    let create_contact = web::resource("/new_contacts").route(web::post().to(create_contact));
     config
         .service(signup)
         .service(auth)
         .service(profile)
         .service(all_events)
-        .service(all_contacts);
+        .service(all_contacts)
+        .service(create_contact);
 }

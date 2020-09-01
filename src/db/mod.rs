@@ -1,5 +1,6 @@
 pub mod user;
 pub mod event;
+pub mod contact;
 // #[path = "../handlers/auth.rs"] mod auth;
 
 pub const UNIQUE_VIOLATION_CODE: &str = "23505";

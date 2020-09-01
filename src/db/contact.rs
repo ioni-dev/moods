@@ -1,7 +1,7 @@
 use crate::{
     config::crypto::CryptoService,
     errors::AppError,
-    models::event::{Event, NewEvent, UpdateEvent},
+    models::contact::{Contact, NewContact, UpdateContact},
 };
 use actix_web::{web::Data, FromRequest};
 use color_eyre::Result;
@@ -21,9 +21,40 @@ impl ContactRepository {
         Self { pool }
     }
 
+    #[instrument(skip(self, new_contact))]
+    pub async fn create(&self, new_contact: NewContact) -> Result<Contact> {
+
+        let contact = sqlx::query_as::<_, Contact>(
+            "insert into contacts (first_name, middle_name, last_name, phone, linkedin, facebook,  twitter,
+                website, description, is_active, last_talked_to, birthday, company, company_website, avatar_url, last_consulted_at, organization_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) returning *",
+        )
+        .bind(new_contact.first_name)
+        .bind(new_contact.middle_name)
+        .bind(new_contact.last_name)
+        .bind(new_contact.phone)
+        .bind(new_contact.linkedin)
+        .bind(new_contact.facebook)
+        .bind(new_contact.twitter)
+        .bind(new_contact.website)
+        .bind(new_contact.description)
+        .bind(new_contact.is_active)
+        .bind(new_contact.last_talked_to)
+        .bind(new_contact.birthday)
+        .bind(new_contact.company)
+        .bind(new_contact.company_website)
+        .bind(new_contact.avatar_url)
+        .bind(new_contact.last_consulted_at)
+        .bind(new_contact.organization_id)
+        .fetch_one(&*self.pool)
+        .await?;
+
+        // println!("{:?}", contact);
+        Ok(contact)
+    }
+
     #[instrument(skip(self))]
     pub async fn get_all(&self, id: Uuid) -> Result<Option<Contact>> {
-        let all_contacts = sqlx::query_as::<_, Event>("select * from contacts where user_id = $1")
+        let all_contacts = sqlx::query_as::<_, Contact>("select * from contacts where user_id = $1")
             .bind(id)
             .fetch_optional(&*self.pool)
             .await?;

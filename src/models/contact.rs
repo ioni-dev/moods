@@ -29,37 +29,37 @@ pub struct Contact {
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct NewContact {
-    #[validate(length(min = 15))]
+    #[validate(length(min = 4))]
     pub first_name: String,
     pub middle_name: String,
-    #[valdate(Required)]
+    #[validate(length(min = 4))]
     pub last_name: String,
-    #[valdate(Required)]
+    #[validate(length(min = 4))]
     pub phone: String,
     pub linkedin: String,
     pub facebook: String,
     pub twitter: String,
     pub website: String,
-    #[valdate(Required)]
+    #[validate(length(min = 4))]
     pub description: String,
-    #[valdate(Required)]
     pub is_active: bool,
     pub last_talked_to: NaiveDateTime,
     pub birthday: NaiveDateTime,
-    #[valdate(Required)]
+    #[validate(length(min = 4))]
     pub company: String,
     pub company_website: String,
     pub avatar_url: String,
     pub last_consulted_at: NaiveDateTime,
+    pub organization_id: Uuid
 }
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct UpdateContact {
     #[validate(length(min = 15))]
     pub first_name: String,
-    #[valdate(Required)]
+    #[validate(length(min = 4))]
     pub last_name: String,
-    #[valdate(Required)]
+    #[validate(length(min = 7))]
     pub phone: String,
     pub last_talked_to: NaiveDateTime,
     pub company: String,
