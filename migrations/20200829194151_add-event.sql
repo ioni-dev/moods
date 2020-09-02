@@ -7,12 +7,12 @@ CREATE TABLE "events"
  "description"     varchar NOT NULL,
  "category_tag"    varchar NOT NULL,
  "active"          boolean NOT NULL default true,
- "organization_id" uuid NOT NULL,
  "start_date"      date NULL,
  "end_date"        date NULL,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "event_id"        uuid  NULL,
+ "organization_id" uuid NOT NULL,
 
  CONSTRAINT "PK_event" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
