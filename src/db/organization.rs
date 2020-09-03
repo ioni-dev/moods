@@ -30,26 +30,46 @@ impl OrganizationRepository {
         Ok(all_organizations)
     }
 
-    #[instrument(skip(self, new_organization))]
-    pub async fn create(&self, new_organization: NewOrganization) -> Result<Organization> {
+    #[instrument(skip(self, new_organization, hashing))]
+    pub async fn create(
+        &self,
+        new_organization: NewOrganization,
+        hashing: &CryptoService,
+    ) -> Result<Organization> {
+        let password_hash = hashing.hash_password(new_organization.password).await?;
+
+        // let organization = sqlx::query_as::<_, Organization>(
+        //     "insert into organizations (name, address, website, email, password_hash, active,  email_verified,
+        //         max_employees, max_users, phone) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning *",
+        // )
+        // .bind(new_organization.name)
+        // .bind(new_organization.address)
+        // .bind(new_organization.website)
+        // .bind(new_organization.email)
+        // .bind(new_organization.password)
+        // .bind(new_organization.active)
+        // .bind(new_organization.email_verified)
+        // .bind(new_organization.max_employees)
+        // .bind(new_organization.max_users)
+        // .bind(new_organization.phone)
+        // .fetch_one(&*self.pool)
+        // .await?;
+
         let organization = sqlx::query_as::<_, Organization>(
-            "insert into organizations (name, address, website, email, password_hash, active,  email_verified,
-                max_employees, max_users, phone) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning *",
+            "insert into organizations (name, address, website, email, password_hash, max_employees, max_users, phone) values ($1, $2, $3, $4, $5,$6, $7, $8) returning *",
         )
         .bind(new_organization.name)
         .bind(new_organization.address)
         .bind(new_organization.website)
         .bind(new_organization.email)
-        .bind(new_organization.password_hash)
-        .bind(new_organization.active)
-        .bind(new_organization.email_verified)
+        .bind(password_hash)
         .bind(new_organization.max_employees)
         .bind(new_organization.max_users)
         .bind(new_organization.phone)
         .fetch_one(&*self.pool)
         .await?;
 
-        // println!("{:?}", contact);
+        println!("{:?}", organization);
         Ok(organization)
     }
 }
