@@ -1,3 +1,4 @@
+mod appointment;
 mod auth;
 mod contact;
 mod event;
@@ -6,6 +7,7 @@ mod user;
 
 use crate::errors::AppError;
 use actix_web::{web, HttpResponse};
+use appointment::{create_appointment, get_all_appointments};
 use auth::auth;
 use contact::{create_contact, get_all_contacts};
 use event::get_all_events;
@@ -17,6 +19,9 @@ type AppResponse = AppResult<HttpResponse>;
 pub fn app_config(config: &mut web::ServiceConfig) {
     let organization_signup =
         web::resource("/organization-signup").route(web::post().to(create_organization));
+
+    let all_organizations =
+        web::resource("/all-organizations").route(web::get().to(get_all_organizations));
 
     let signup = web::resource("/signup").route(web::post().to(create_user));
 
@@ -33,6 +38,12 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let all_contacts = web::resource("/contacts").route(web::get().to(get_all_contacts));
     let create_contact = web::resource("/new-contacts").route(web::post().to(create_contact));
 
+    let create_appointment =
+        web::resource("/create-appointment").route(web::post().to(create_appointment));
+
+    let all_appointments =
+        web::resource("/all-appointments").route(web::get().to(get_all_appointments));
+
     config
         .service(signup)
         .service(auth)
@@ -40,5 +51,8 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .service(all_events)
         .service(all_contacts)
         .service(create_contact)
-        .service(organization_signup);
+        .service(organization_signup)
+        .service(all_organizations)
+        .service(create_appointment)
+        .service(all_appointments);
 }

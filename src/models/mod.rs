@@ -1,3 +1,4 @@
+pub mod appointment;
 pub mod contact;
 pub mod event;
 pub mod organization;
