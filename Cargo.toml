@@ -12,9 +12,10 @@ actix-rt = "1"
 actix-identity = "0.2"
 actix-web-httpauth = "0.4"
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 futures = { version = "0.3", features = ["compat"] }
 argonautica = { version = "0.2", features = ["simd"] }
-sqlx = { version = "0.3", default-features = false, features = [ "runtime-tokio", "macros", "postgres", "uuid", "chrono" ] }
+sqlx = { version = "0.3", default-features = false, features = [ "runtime-tokio", "macros", "postgres", "uuid", "chrono", "json" ] }
 color-eyre = "0.3"
 eyre = "0.4"
 tracing = "0.1"

@@ -3,16 +3,18 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(sqlx::Type, Serialize, Deserialize, Debug, Clone)]
+#[sqlx(rename = "meeting_partners")]
 pub struct MeetingPartners {
-    pub id: String,
-    pub name: String,
+    id: String,
+    name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(sqlx::Type, Serialize, Deserialize, Debug, Clone)]
+#[sqlx(rename = "client_attendees")]
 pub struct ClientAttendees {
-    pub id: String,
-    pub name: String,
+    id: String,
+    name: String,
 }
 
 #[derive(Debug, sqlx::FromRow, Serialize)]
@@ -23,10 +25,8 @@ pub struct Appointment {
     pub start_date: NaiveDateTime,
     pub end_date: NaiveDateTime,
     pub notes: String,
-    #[serde(skip_serializing)]
-    pub meeting_partners: Vec<MeetingPartners>,
-    #[serde(skip_serializing)]
-    pub client_attendees: Vec<ClientAttendees>,
+    // pub meeting_partners: Vec<MeetingPartners>,
+    // pub client_attendees: Vec<ClientAttendees>,
     pub is_completed: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -44,10 +44,10 @@ pub struct NewAppointment {
     // #[validate(Required)]
     pub end_date: NaiveDateTime,
     pub notes: String,
-    #[serde(skip_serializing)]
-    pub meeting_partners: Vec<MeetingPartners>,
-    #[serde(skip_serializing)]
-    pub client_attendees: Vec<ClientAttendees>,
+    // #[serde(skip_serializing)]
+    // pub meeting_partners: Vec<MeetingPartners>,
+    // #[serde(skip_serializing)]
+    // pub client_attendees: Vec<ClientAttendees>,
     // #[validate(Required)]
     pub user_id: Uuid,
 }
@@ -63,6 +63,6 @@ pub struct UpdateAppointment {
     // #[validate(Required)]
     pub end_date: NaiveDateTime,
     pub notes: String,
-    pub meeting_partners: Vec<MeetingPartners>,
-    pub client_attendees: Vec<ClientAttendees>,
+    // pub meeting_partners: Vec<MeetingPartners>,
+    // pub client_attendees: Vec<ClientAttendees>,
 }
