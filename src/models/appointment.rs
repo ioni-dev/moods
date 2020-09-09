@@ -1,18 +1,13 @@
+use actix_web::{web, App};
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use sqlx::types::Json;
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(sqlx::Type, Serialize, Deserialize, Debug, Clone)]
-#[sqlx(rename = "meeting_partners")]
-pub struct MeetingPartners {
-    id: String,
-    name: String,
-}
-
-#[derive(sqlx::Type, Serialize, Deserialize, Debug, Clone)]
-#[sqlx(rename = "client_attendees")]
-pub struct ClientAttendees {
+#[derive(sqlx::Type, sqlx::FromRow, Serialize, Deserialize, Debug)]
+pub struct Attendees {
     id: String,
     name: String,
 }
@@ -25,8 +20,8 @@ pub struct Appointment {
     pub start_date: NaiveDateTime,
     pub end_date: NaiveDateTime,
     pub notes: String,
-    // pub meeting_partners: Vec<MeetingPartners>,
-    // pub client_attendees: Vec<ClientAttendees>,
+    pub meeting_partners: Json<Attendees>,
+    pub client_attendees: Json<Attendees>,
     pub is_completed: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -35,20 +30,15 @@ pub struct Appointment {
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct NewAppointment {
-    #[validate(length(min = 4))]
+    #[validate(length(min = 3))]
     pub name: String,
-    #[validate(length(min = 15))]
+    #[validate(length(min = 10))]
     pub description: String,
-    // #[validate(Required)]
-    pub start_date: NaiveDateTime,
-    // #[validate(Required)]
-    pub end_date: NaiveDateTime,
-    pub notes: String,
-    // #[serde(skip_serializing)]
-    // pub meeting_partners: Vec<MeetingPartners>,
-    // #[serde(skip_serializing)]
-    // pub client_attendees: Vec<ClientAttendees>,
-    // #[validate(Required)]
+    pub start_date: Option<NaiveDateTime>,
+    pub end_date: Option<NaiveDateTime>,
+    pub notes: Option<String>,
+    pub meeting_partners: Json<Attendees>,
+    pub client_attendees: Json<Attendees>,
     pub user_id: Uuid,
 }
 
@@ -58,11 +48,9 @@ pub struct UpdateAppointment {
     pub name: String,
     #[validate(length(min = 15))]
     pub description: String,
-    // #[validate(Required)]
     pub start_date: NaiveDateTime,
-    // #[validate(Required)]
     pub end_date: NaiveDateTime,
     pub notes: String,
-    // pub meeting_partners: Vec<MeetingPartners>,
-    // pub client_attendees: Vec<ClientAttendees>,
+    pub meeting_partners: Json<Attendees>,
+    pub client_attendees: Json<Attendees>,
 }

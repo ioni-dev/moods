@@ -7,7 +7,7 @@ mod user;
 
 use crate::errors::AppError;
 use actix_web::{web, HttpResponse};
-// use appointment::{create_appointment, get_all_appointments};
+use appointment::{create_appointment, get_all_appointments};
 use auth::auth;
 use contact::{create_contact, get_all_contacts};
 use event::get_all_events;
@@ -38,11 +38,11 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let all_contacts = web::resource("/contacts").route(web::get().to(get_all_contacts));
     let create_contact = web::resource("/new-contacts").route(web::post().to(create_contact));
 
-    // let create_appointment =
-    //     web::resource("/create-appointment").route(web::post().to(create_appointment));
+    let create_appointment =
+        web::resource("/create-appointment").route(web::post().to(create_appointment));
 
-    // let all_appointments =
-    //     web::resource("/all-appointments").route(web::get().to(get_all_appointments));
+    let all_appointments =
+        web::resource("/all-appointments").route(web::get().to(get_all_appointments));
 
     config
         .service(signup)
@@ -52,7 +52,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .service(all_contacts)
         .service(create_contact)
         .service(organization_signup)
-        .service(all_organizations);
-    // .service(create_appointment)
-    // .service(all_appointments);
+        .service(all_organizations)
+        .service(create_appointment)
+        .service(all_appointments);
 }

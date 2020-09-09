@@ -21,26 +21,26 @@ impl AppointmentRepository {
         Self { pool }
     }
 
-    // #[instrument(skip(self, new_appointment))]
-    // pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
-    //     let appointment = sqlx::query_as::<_, Appointment>(
-    //         "insert into appointments (name, description, start_date, end_date, notes, meeting_partners,  client_attendees,
-    //             user_id) values ($1, $2, $3, $4, $5, $6, $7, $8) returning *",
-    //     )
-    //     .bind(new_appointment.name)
-    //     .bind(new_appointment.description)
-    //     .bind(new_appointment.start_date)
-    //     .bind(new_appointment.end_date)
-    //     .bind(new_appointment.notes)
-    //     .bind(new_appointment.meeting_partners)
-    //     .bind(new_appointment.client_attendees)
-    //     .bind(new_appointment.user_id)
-    //     .fetch_one(&*self.pool)
-    //     .await?;
+    #[instrument(skip(self, new_appointment))]
+    pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
+        let appointment = sqlx::query_as::<_, Appointment>(
+            "insert into appointments (name, description, start_date, end_date, notes, meeting_partners,  client_attendees,
+                user_id) values ($1, $2, $3, $4, $5, $6, $7, $8) returning *",
+        )
+        .bind(new_appointment.name)
+        .bind(new_appointment.description)
+        .bind(new_appointment.start_date)
+        .bind(new_appointment.end_date)
+        .bind(new_appointment.notes)
+        .bind(new_appointment.meeting_partners)
+        .bind(new_appointment.client_attendees)
+        .bind(new_appointment.user_id)
+        .fetch_one(&*self.pool)
+        .await?;
 
-    //     println!("{:?}", appointment);
-    //     Ok(appointment)
-    // }
+        println!("{:?}", appointment);
+        Ok(appointment)
+    }
 
     #[instrument(skip(self))]
     pub async fn get_all(&self, id: Uuid) -> Result<Option<Appointment>> {
