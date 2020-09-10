@@ -87,10 +87,7 @@ pub async fn update_profile(
             let error_map = errors.field_errors();
 
             let message = if error_map.contains_key("image") {
-                format!(
-                    "Invalid image.is not a valid url.",
-
-                )
+                format!("Invalid image.is not a valid url.",)
             } else {
                 "Invalid input.".to_string()
             };
@@ -99,14 +96,15 @@ pub async fn update_profile(
         }
     }?;
 
-    let user = repository.update_profile(user.0, profile.0,  crypto_service.as_ref()).await?;
+    let user = repository
+        .update_profile(user.0, profile.0, crypto_service.as_ref())
+        .await?;
 
     Ok(HttpResponse::Ok().json(user))
 }
 
 #[instrument[skip(repository)]]
 pub async fn profile(user: AuthenticatedUser, repository: UserRepository) -> AppResponse {
-    format!("cheking profile {:?}", user);
     let user = repository
         .find_by_id(user.0)
         .await?

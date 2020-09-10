@@ -56,6 +56,7 @@ pub async fn create_appointment(
     }?;
 
     let result: Result<Appointment> = repository.create(appointment.0).await;
+    format!("Invalid name, \"{:?}\" is too short.", result);
     match result {
         Ok(appointment) => Ok(HttpResponse::Ok().json(appointment)),
         Err(error) => {
@@ -80,4 +81,18 @@ pub async fn create_appointment(
             Err(error)
         }
     }
+}
+
+#[instrument[skip(repository)]]
+pub async fn update_appointment(
+    user: AuthenticatedUser,
+    appointment: Json<UpdateAppointment>,
+    repository: AppointmentRepository,
+) -> AppResponse {
+    let appointment = repository
+        .find_by_id(user.0)
+        .await?
+        .ok_or(AppError::INTERNAL_ERROR)?;
+
+    Ok(HttpResponse::Ok().json(appointment))
 }

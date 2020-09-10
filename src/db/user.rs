@@ -38,29 +38,20 @@ impl UserRepository {
         Ok(user)
     }
 
-    #[instrument(skip(self, profile, hashing))]
     pub async fn update_profile(
         &self,
         user_id: Uuid,
         profile: UpdateProfile,
         hashing: &CryptoService,
     ) -> Result<User> {
-        // check if passwords are the same
-        // let valid = hashing
-        // .verify_password(password, &user.password_hash)
-        // .await?;
-
-        // NOTE: need to implement the password hashing correctly
-        // let password_v = profile.password_hash.get_or_insert_with(|| String::from("default"));
-
-        // let password_hash = hashing.hash_password(password_v).await?;
+        let password_hash = hashing.hash_password(profile.password).await?;
 
         let user = sqlx::query_as::<_, User>(
             "update users set name = $2, password_hash = $3 where id = $1 returning *",
         )
         .bind(user_id)
         .bind(profile.name)
-        .bind(profile.password_hash)
+        .bind(password_hash)
         .fetch_one(&*self.pool)
         .await?;
         Ok(user)

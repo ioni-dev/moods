@@ -31,5 +31,5 @@ pub struct NewUser {
 #[derive(Debug, Deserialize, Validate)]
 pub struct UpdateProfile {
     pub name: Option<String>,
-    pub password_hash: Option<String>,
+    pub password: String,
 }

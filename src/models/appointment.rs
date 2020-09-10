@@ -39,6 +39,7 @@ pub struct NewAppointment {
     pub notes: Option<String>,
     pub meeting_partners: Json<Attendees>,
     pub client_attendees: Json<Attendees>,
+    pub is_completed: bool,
     pub user_id: Uuid,
 }
 
@@ -48,9 +49,9 @@ pub struct UpdateAppointment {
     pub name: String,
     #[validate(length(min = 15))]
     pub description: String,
-    pub start_date: NaiveDateTime,
-    pub end_date: NaiveDateTime,
-    pub notes: String,
-    pub meeting_partners: Json<Attendees>,
-    pub client_attendees: Json<Attendees>,
+    pub start_date: Option<NaiveDateTime>,
+    pub end_date: Option<NaiveDateTime>,
+    pub notes: Option<String>,
+    pub meeting_partners: Option<Json<Attendees>>,
+    pub client_attendees: Option<Json<Attendees>>,
 }
