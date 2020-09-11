@@ -56,7 +56,7 @@ pub async fn create_appointment(
     }?;
 
     let result: Result<Appointment> = repository.create(appointment.0).await;
-    format!("Invalid name, \"{:?}\" is too short.", result);
+
     match result {
         Ok(appointment) => Ok(HttpResponse::Ok().json(appointment)),
         Err(error) => {
