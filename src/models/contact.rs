@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow, Serialize)]
 pub struct Contact {
     pub id: Uuid,
     pub first_name: String,
@@ -50,7 +50,7 @@ pub struct NewContact {
     pub company_website: String,
     pub avatar_url: String,
     pub last_consulted_at: NaiveDateTime,
-    pub organization_id: Uuid
+    pub organization_id: Uuid,
 }
 
 #[derive(Debug, Deserialize, Validate)]

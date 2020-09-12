@@ -12,9 +12,9 @@ use actix_web::{
 };
 use color_eyre::Result;
 use sqlx::{error::DatabaseError, postgres::PgError};
-use tracing::{debug, instrument, info};
-use validator::Validate;
+use tracing::{debug, info, instrument};
 use uuid::Uuid;
+use validator::Validate;
 
 #[instrument[skip(repository)]]
 pub async fn get_all_contacts(
@@ -30,31 +30,37 @@ pub async fn get_all_contacts(
 }
 
 #[instrument(skip(contact, repository))]
-pub async fn create_contact (
+pub async fn create_contact(
     contact: Json<NewContact>,
     repository: ContactRepository,
 ) -> AppResponse {
-    info!("testing contact params" );
-    // match contact.validate() {
-    //     Ok(_) => Ok(()),
-    //     Err(errors) => {
-    //         let error_map = errors.field_errors();
+    info!("testing contact params");
+    match contact.validate() {
+        Ok(_) => Ok(()),
+        Err(errors) => {
+            let error_map = errors.field_errors();
 
-    //         let message = if error_map.contains_key("first_name") {
-    //             format!("Invalid first name, \"{}\" is too short.", contact.first_name)
-    //         } else if error_map.contains_key("last_name") {
-    //             format!("Invalid last name, \"{}\" is to short", contact.last_name)
-    //         } else if error_map.contains_key("description") {
-    //             format!("Invalid description, \"{}\" is to short", contact.description)
-    //         } else if error_map.contains_key("company"){
-    //             format!("Invalid description, \"{}\" is to short", contact.company)
-    //         } else {
-    //             "Invalid input.".to_string()
-    //         };
+            let message = if error_map.contains_key("first_name") {
+                format!(
+                    "Invalid first name, \"{}\" is too short.",
+                    contact.first_name
+                )
+            } else if error_map.contains_key("last_name") {
+                format!("Invalid last name, \"{}\" is to short", contact.last_name)
+            } else if error_map.contains_key("description") {
+                format!(
+                    "Invalid description, \"{}\" is to short",
+                    contact.description
+                )
+            } else if error_map.contains_key("company") {
+                format!("Invalid description, \"{}\" is to short", contact.company)
+            } else {
+                "Invalid input.".to_string()
+            };
 
-    //         Err(AppError::INVALID_INPUT.message(message));
-    //     }
-    // }?;
+            Err(AppError::INVALID_INPUT.message(message))
+        }
+    }?;
 
     let result: Result<Contact> = repository.create(contact.0).await;
     match result {
@@ -87,5 +93,4 @@ pub async fn create_contact (
             Err(error)
         }
     }
-
 }
