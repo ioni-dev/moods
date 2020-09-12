@@ -7,23 +7,23 @@ edition = "2018"
 [dependencies]
 config = "0.10"
 dotenv = "0.15"
-actix-web = "2"
+actix-web = "3"
 actix-rt = "1"
-actix-identity = "0.2"
-actix-web-httpauth = "0.4"
+actix-identity = "0.3.0"
+actix-web-httpauth = "0.5.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 futures = { version = "0.3", features = ["compat"] }
 argonautica = { version = "0.2", features = ["simd"] }
 sqlx = { version = "0.3", default-features = false, features = [ "runtime-tokio", "macros", "postgres", "uuid", "chrono", "json" ] }
-color-eyre = "0.3"
-eyre = "0.4"
+color-eyre = "0.5.2"
+eyre = "0.6.0"
 tracing = "0.1"
 tracing-futures = "0.2"
 tracing-log = { version = "0.1", features = ["env_logger"] }
 tracing-subscriber = "0.2"
 uuid = { version = "0.8", features = ["serde", "v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-validator = "0.10"
-validator_derive = "0.10"
-jsonwebtoken = "7.1"
+validator = "0.11.0"
+validator_derive = "0.11"
+jsonwebtoken = "7.2.0"
