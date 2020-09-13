@@ -7,12 +7,10 @@ CREATE TABLE "organizations"
  "address"        varchar NOT NULL,
  "website"        varchar null,
  "email"          varchar NOT NULL,
- "password_hash"  varchar NOT NULL,
  "active"         boolean NOT NULL DEFAULT true,
  "email_verified" boolean NOT NULL DEFAULT false,
  "max_employees"  int NOT NULL,
- "max_users"      int NOT NULL,
- "phone"          varchar NOT NULL,
+ "phone"          varchar NULL,
  "created_at"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
  "updated_at"     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

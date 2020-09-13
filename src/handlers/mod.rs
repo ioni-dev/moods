@@ -36,7 +36,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let all_events = web::resource("/events").route(web::get().to(get_all_events));
 
     let all_contacts = web::resource("/contacts").route(web::get().to(get_all_contacts));
-    let create_contact = web::resource("/new-contacts").route(web::post().to(create_contact));
+    let create_contact = web::resource("/new-contact").route(web::post().to(create_contact));
 
     let create_appointment =
         web::resource("/create-appointment").route(web::post().to(create_appointment));
