@@ -10,7 +10,7 @@ CREATE TABLE "appointments"
  "end_date"         TIMESTAMP NULL,
  "notes"            text NULL,
  "meeting_partners" json NULL,
- "client_attendees" json NOT NULL,
+ "client_attendees" json NULL,
  "is_completed"     boolean NOT NULL default false,
  "created_at"       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
