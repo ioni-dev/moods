@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE status_tag_enum AS ENUM ('active', 'pending', 'cancelled');
 
-CREATE TABLE "suppliers"
+CREATE TABLE "traders"
 (
  "id"               uuid DEFAULT uuid_generate_v4(),
  "name"             varchar NOT NULL,
