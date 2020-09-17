@@ -27,37 +27,37 @@ CREATE TABLE "projects"
  CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" )
 );
 
-CREATE INDEX "fkIdx_users_on_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_users_on_projects" ON "projects"
 (
  "id_user"
 );
 
-CREATE INDEX "fkIdx_employees_on_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_employees_on_projects" ON "projects"
 (
  "id_employee"
 );
 
-CREATE INDEX "fkIdx_task_on_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_task_on_projects" ON "projects"
 (
  "id_task"
 );
 
-CREATE INDEX "fkIdx_contact_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_contact_projects" ON "projects"
 (
  "id_contact"
 );
 
-CREATE INDEX "fkIdx_organization_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_organization_projects" ON "projects"
 (
  "id_organization"
 );
 
-CREATE INDEX "fkIdx_appointment_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_appointment_projects" ON "projects"
 (
  "id_appointment"
 );
 
-CREATE INDEX "fkIdx_note_projects" ON "public"."projects"
+CREATE INDEX "fkIdx_note_projects" ON "projects"
 (
  "id_note"
 );

@@ -8,7 +8,7 @@ CREATE TABLE "notes"
  "attachment_path" JSON NULL,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  
+
  CONSTRAINT "PK_note" PRIMARY KEY ( "id" )
 );
 

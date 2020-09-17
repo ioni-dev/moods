@@ -27,27 +27,27 @@ CREATE TABLE "tasks"
  CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" )
 );
 
-CREATE INDEX "fkIdx_organization_on_tasks" ON "public"."tasks"
+CREATE INDEX "fkIdx_organization_on_tasks" ON "tasks"
 (
  "id_organization"
 );
 
-CREATE INDEX "fkIdx_project_on_tasks" ON "public"."tasks"
+CREATE INDEX "fkIdx_project_on_tasks" ON "tasks"
 (
  "id_project"
 );
 
-CREATE INDEX "fkIdx_comment_on_tasks" ON "public"."tasks"
+CREATE INDEX "fkIdx_comment_on_tasks" ON "tasks"
 (
  "id_comment"
 );
 
-CREATE INDEX "fkIdx_note_on_tasks" ON "public"."tasks"
+CREATE INDEX "fkIdx_note_on_tasks" ON "tasks"
 (
  "id_note"
 );
 
-CREATE INDEX "fkIdx_user_on_tasks" ON "public"."tasks"
+CREATE INDEX "fkIdx_user_on_tasks" ON "tasks"
 (
  "id_user"
 );

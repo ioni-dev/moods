@@ -11,19 +11,13 @@ CREATE TABLE "users"
  "max_employees"   int NOT NULL default 1,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "organization_id" uuid  NULL,
+ "id_organization" uuid  NULL,
+
  CONSTRAINT "PK_user" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
 );
 
 CREATE INDEX "fkIdx_organization_on_users" ON "users"
 (
- "organization_id"
+ "id_organization"
 );
-
-
-
-
-
-
-

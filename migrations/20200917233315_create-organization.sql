@@ -16,10 +16,3 @@ CREATE TABLE "organizations"
 
  CONSTRAINT "PK_organization" PRIMARY KEY ( "id" )
 );
-
-
-
-
-
-
-

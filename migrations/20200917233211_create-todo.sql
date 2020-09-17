@@ -5,7 +5,7 @@ CREATE TABLE "todos"
  "id"              uuid DEFAULT uuid_generate_v4(),
  "title"           varchar NOT NULL,
  "description"     varchar NOT NULL,
- "assigned_to"     uuid NULL,
+ "id_assigned_to"  uuid NULL,
  "due_date"        DATE NULL,
  "lat"             DOUBLE PRECISION NULL,
  "long"            DOUBLE PRECISION NULL,
@@ -16,7 +16,7 @@ CREATE TABLE "todos"
 
  CONSTRAINT "PK_todo" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" ),
- CONSTRAINT "FK_assigned_to" FOREIGN KEY ( "assigned_to" ) REFERENCES "projects" ( "id" )
+ CONSTRAINT "FK_assigned_to" FOREIGN KEY ( "id_assigned_to" ) REFERENCES "users" ( "id" )
 );
 
 CREATE INDEX "fkIdx_project_on_todos" ON "todos"
@@ -26,6 +26,6 @@ CREATE INDEX "fkIdx_project_on_todos" ON "todos"
 
 CREATE INDEX "fkIdx_project_on_todos" ON "todos"
 (
- "assigned_to"
+ "id_assigned_to"
 );
 

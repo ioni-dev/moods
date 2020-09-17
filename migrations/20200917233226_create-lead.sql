@@ -40,4 +40,3 @@ CREATE INDEX "fkIdx_contact_on_todos" ON "leads"
 (
  "id_contact"
 );
-
