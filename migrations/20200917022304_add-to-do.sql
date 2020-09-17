@@ -13,8 +13,9 @@ CREATE TABLE "todos"
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_project"      uuid  NULL,
- CONSTRAINT "PK_user" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" )
+
+ CONSTRAINT "PK_todo" PRIMARY KEY ( "id" ),
+ CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" ),
  CONSTRAINT "FK_assigned_to" FOREIGN KEY ( "assigned_to" ) REFERENCES "projects" ( "id" )
 );
 

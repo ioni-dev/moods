@@ -15,11 +15,13 @@ CREATE TABLE "bids"
  "created_at"               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization"          uuid NULL,
+ "id_note"                  uuid NULL,
 
  CONSTRAINT "PK_bids" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_primary_bidding_contact" FOREIGN KEY ( "primary_bidding_contact" ) REFERENCES "users" ( "id" )
- CONSTRAINT "FK_proposal" FOREIGN KEY ( "id_proposal" ) REFERENCES "proposals" ( "id" )
- CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
+ CONSTRAINT "FK_primary_bidding_contact" FOREIGN KEY ( "primary_bidding_contact" ) REFERENCES "users" ( "id" ),
+ CONSTRAINT "FK_proposal" FOREIGN KEY ( "id_proposal" ) REFERENCES "proposals" ( "id" ),
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" ),
+ CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" )
 );
 
 CREATE INDEX "fkIdx_users_on_bids" ON "public"."bids"
@@ -35,4 +37,9 @@ CREATE INDEX "fkIdx_proposal_on_bids" ON "public"."bids"
 CREATE INDEX "fkIdx_organization_on_bids" ON "public"."bids"
 (
  "id_organization"
+);
+
+CREATE INDEX "fkIdx_notes_on_bids" ON "public"."bids"
+(
+ "id_note"
 );

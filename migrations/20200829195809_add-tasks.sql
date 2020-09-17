@@ -16,10 +16,15 @@ CREATE TABLE "tasks"
  "updated_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization"   uuid NULL,
  "id_project"        uuid NULL,
+ "id_note"           uuid NUll,
+ "id_user"           uuid NULL,
 
  CONSTRAINT "PK_task" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
- CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" )
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" ),
+ CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" ),
+ CONSTRAINT "FK_comment" FOREIGN KEY ( "id_comment" ) REFERENCES "comments" ( "id" ),
+ CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" ),
+ CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" )
 );
 
 CREATE INDEX "fkIdx_organization_on_tasks" ON "public"."tasks"
@@ -37,5 +42,12 @@ CREATE INDEX "fkIdx_comment_on_tasks" ON "public"."tasks"
  "id_comment"
 );
 
+CREATE INDEX "fkIdx_note_on_tasks" ON "public"."tasks"
+(
+ "id_note"
+);
 
-
+CREATE INDEX "fkIdx_user_on_tasks" ON "public"."tasks"
+(
+ "id_user"
+);

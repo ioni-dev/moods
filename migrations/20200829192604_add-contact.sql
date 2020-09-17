@@ -1,4 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "contacts"
 (
@@ -11,28 +10,33 @@ CREATE TABLE "contacts"
  "facebook"          varchar NULL,
  "twitter"           varchar NULL,
  "website"           varchar NULL,
- "notes"             varchar NULL,
  "is_active"         boolean NOT NULL default true,
  "last_talked_to"    TIMESTAMP NULL,
  "birthday"          date NULL,
  "company_name"      varchar NULL,
  "company_website"   varchar NULL,
  "position"          varchar NULL,
- "notes"             varchar NULL,
  "logs"              varchar NULL,
  "work_phone"        varchar NULL,
- "birthday"          varchar NULL,
  "pic_url"           varchar NULL,
  "last_consulted_at" date NULL,
  "created_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "organization_id"   uuid  NULL,
+ "id_note"           uuid NULL,
 
  CONSTRAINT "PK_contact" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" )
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "organization_id" ) REFERENCES "organizations" ( "id" ),
+ CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" )
 );
 
 CREATE INDEX "fkIdx_organization_on_contacts" ON "contacts"
 (
  "organization_id"
+);
+
+
+CREATE INDEX "fkIdx_note_on_contacts" ON "contacts"
+(
+ "id_note"
 );

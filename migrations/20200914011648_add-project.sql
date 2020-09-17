@@ -15,14 +15,16 @@ CREATE TABLE "projects"
  "created_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization"   uuid NULL,
+ "id_note"           uuid NUll,
 
  CONSTRAINT "PK_project" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" )
- CONSTRAINT "FK_employee" FOREIGN KEY ( "id_employee" ) REFERENCES "employees" ( "id" )
- CONSTRAINT "FK_task" FOREIGN KEY ( "id_task" ) REFERENCES "tasks" ( "id" )
- CONSTRAINT "FK_contact" FOREIGN KEY ( "id_contact" ) REFERENCES "contacts" ( "id" )
- CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
- CONSTRAINT "FK_appointment" FOREIGN KEY ( "id_appointment" ) REFERENCES "appointments" ( "id" )
+ CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" ),
+ CONSTRAINT "FK_employee" FOREIGN KEY ( "id_employee" ) REFERENCES "employees" ( "id" ),
+ CONSTRAINT "FK_task" FOREIGN KEY ( "id_task" ) REFERENCES "tasks" ( "id" ),
+ CONSTRAINT "FK_contact" FOREIGN KEY ( "id_contact" ) REFERENCES "contacts" ( "id" ),
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" ),
+ CONSTRAINT "FK_appointment" FOREIGN KEY ( "id_appointment" ) REFERENCES "appointments" ( "id" ),
+ CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" )
 );
 
 CREATE INDEX "fkIdx_users_on_projects" ON "public"."projects"
@@ -54,3 +56,9 @@ CREATE INDEX "fkIdx_appointment_projects" ON "public"."projects"
 (
  "id_appointment"
 );
+
+CREATE INDEX "fkIdx_note_projects" ON "public"."projects"
+(
+ "id_note"
+);
+
