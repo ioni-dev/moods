@@ -18,22 +18,22 @@ CREATE TABLE "emails"
  CONSTRAINT "FK_contact" FOREIGN KEY ( "id_contact" ) REFERENCES "contacts" ( "id" )
 );
 
-CREATE INDEX "fkIdx_users_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_users_on_emails" ON "public"."emails"
 (
  "id_user"
 );
 
-CREATE INDEX "fkIdx_employees_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_employees_on_emails" ON "public"."emails"
 (
- "FK_employee"
+ "id_employee"
 );
 
-CREATE INDEX "fkIdx_task_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_task_on_emails" ON "public"."emails"
 (
- "FK_task"
+ "id_task"
 );
 
-CREATE INDEX "fkIdx_contact_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_contact_on_emails" ON "public"."emails"
 (
- "FK_contact"
+ "id_contact"
 );

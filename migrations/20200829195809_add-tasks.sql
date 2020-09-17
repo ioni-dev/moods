@@ -32,6 +32,10 @@ CREATE INDEX "fkIdx_project_on_tasks" ON "public"."tasks"
  "id_project"
 );
 
+CREATE INDEX "fkIdx_comment_on_tasks" ON "public"."tasks"
+(
+ "id_comment"
+);
 
 
 

@@ -25,10 +25,10 @@ CREATE INDEX "fkIdx_users_on_comments" ON "public"."comments"
 
 CREATE INDEX "fkIdx_employees_on_comments" ON "public"."comments"
 (
- "FK_employee"
+ "id_employee"
 );
 
 CREATE INDEX "fkIdx_task_on_comments" ON "public"."comments"
 (
- "FK_task"
+ "id_task"
 );

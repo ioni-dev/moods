@@ -32,12 +32,12 @@ CREATE INDEX "fkIdx_users_on_projects" ON "public"."projects"
 
 CREATE INDEX "fkIdx_employees_on_projects" ON "public"."projects"
 (
- "FK_employee"
+ "id_employee"
 );
 
 CREATE INDEX "fkIdx_task_on_projects" ON "public"."projects"
 (
- "FK_task"
+ "id_task"
 );
 
 CREATE INDEX "fkIdx_contact_projects" ON "public"."projects"

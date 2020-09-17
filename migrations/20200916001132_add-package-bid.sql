@@ -5,7 +5,7 @@ CREATE TABLE "bids"
 (
  "id"                       uuid DEFAULT uuid_generate_v4(),
  "title"                    varchar NOT NULL,
- "attachments_url"           json NULL,
+ "attachments_url"          json NULL,
  "status"                   status_tag_enum  NOT NULL DEFAULT 'Open'
  "due_date"                 TIMESTAMP NULL,
  "primary_bidding_contact"  uuid NOT NULL,
@@ -16,23 +16,23 @@ CREATE TABLE "bids"
  "updated_at"               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization"          uuid NULL,
 
- CONSTRAINT "PK_comment" PRIMARY KEY ( "id" ),
- CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" )
- CONSTRAINT "FK_employee" FOREIGN KEY ( "id_employee" ) REFERENCES "employees" ( "id" )
- CONSTRAINT "FK_task" FOREIGN KEY ( "id_task" ) REFERENCES "tasks" ( "id" )
+ CONSTRAINT "PK_bids" PRIMARY KEY ( "id" ),
+ CONSTRAINT "FK_primary_bidding_contact" FOREIGN KEY ( "primary_bidding_contact" ) REFERENCES "users" ( "id" )
+ CONSTRAINT "FK_proposal" FOREIGN KEY ( "id_proposal" ) REFERENCES "proposals" ( "id" )
+ CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
 );
 
-CREATE INDEX "fkIdx_users_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_users_on_bids" ON "public"."bids"
 (
- "id_user"
+ "primary_bidding_contact"
 );
 
-CREATE INDEX "fkIdx_employees_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_proposal_on_bids" ON "public"."bids"
 (
- "FK_employee"
+ "id_proposal"
 );
 
-CREATE INDEX "fkIdx_task_on_comments" ON "public"."comments"
+CREATE INDEX "fkIdx_organization_on_bids" ON "public"."bids"
 (
- "FK_task"
+ "id_organization"
 );
