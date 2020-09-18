@@ -87,10 +87,39 @@ pub async fn create_appointment(
 pub async fn update_appointment(
     user: AuthenticatedUser,
     appointment: Json<UpdateAppointment>,
+    id_appointment: Uuid,
+    repository: AppointmentRepository,
+) -> AppResponse {
+    match appointment.validate() {
+        Ok(_) => Ok(()),
+        Err(errors) => {
+            let error_map = errors.field_errors();
+
+            let message = if error_map.contains_key("name") {
+                format!("Invalid name, too short",)
+            } else {
+                "Invalid input.".to_string()
+            };
+
+            Err(AppError::INVALID_INPUT.message(message))
+        }
+    }?;
+
+    let appointment = repository
+        .update_appointment(user.0, appointment, id_appointment)
+        .await?;
+
+    Ok(HttpResponse::Ok().json(appointment))
+}
+
+#[instrument[skip(repository)]]
+pub async fn appointment(
+    user: AuthenticatedUser,
+    appointment: Appointment,
     repository: AppointmentRepository,
 ) -> AppResponse {
     let appointment = repository
-        .find_by_id(user.0)
+        .find_by_id(user.0, appointment.id)
         .await?
         .ok_or(AppError::INTERNAL_ERROR)?;
 

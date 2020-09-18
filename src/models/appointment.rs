@@ -8,8 +8,8 @@ use validator::Validate;
 
 #[derive(sqlx::Type, sqlx::FromRow, Serialize, Deserialize, Debug)]
 pub struct Attendees {
-    id: String,
-    name: String,
+    id: Option<String>,
+    name: Option<String>,
 }
 
 #[derive(Debug, sqlx::FromRow, Serialize)]
@@ -17,15 +17,18 @@ pub struct Appointment {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub start_date: NaiveDateTime,
-    pub end_date: NaiveDateTime,
-    pub notes: String,
-    pub meeting_partners: Json<Attendees>,
-    pub client_attendees: Json<Attendees>,
+    pub start_date: Option<NaiveDateTime>,
+    pub end_date: Option<NaiveDateTime>,
+    pub meeting_partners: Option<Json<Attendees>>,
+    pub client_attendees: Option<Json<Attendees>>,
     pub is_completed: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub user_id: Uuid,
+    pub id_user: Option<Uuid>,
+    pub id_note: Option<Uuid>,
+    pub id_project: Option<Uuid>,
+    pub id_lead: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }
 
 #[derive(Debug, Deserialize, Validate)]
@@ -34,24 +37,32 @@ pub struct NewAppointment {
     pub name: String,
     #[validate(length(min = 10))]
     pub description: String,
-    pub start_date: NaiveDateTime,
-    pub end_date: NaiveDateTime,
-    pub notes: String,
-    pub meeting_partners: Json<Attendees>,
-    pub client_attendees: Json<Attendees>,
+    pub start_date: Option<NaiveDateTime>,
+    pub end_date: Option<NaiveDateTime>,
+    pub meeting_partners: Option<Json<Attendees>>,
+    pub client_attendees: Option<Json<Attendees>>,
     pub is_completed: bool,
-    pub user_id: Uuid,
+    pub id_user: Option<Uuid>,
+    pub id_note: Option<Uuid>,
+    pub id_project: Option<Uuid>,
+    pub id_lead: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, sqlx::FromRow, Deserialize, Validate)]
 pub struct UpdateAppointment {
-    #[validate(length(min = 4))]
+    #[validate(length(min = 3))]
     pub name: String,
-    #[validate(length(min = 15))]
+    #[validate(length(min = 10))]
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub notes: Option<String>,
     pub meeting_partners: Option<Json<Attendees>>,
     pub client_attendees: Option<Json<Attendees>>,
+    pub is_completed: bool,
+    pub id_user: Option<Uuid>,
+    pub id_note: Option<Uuid>,
+    pub id_project: Option<Uuid>,
+    pub id_lead: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }

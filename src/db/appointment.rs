@@ -25,18 +25,21 @@ impl AppointmentRepository {
     #[instrument(skip(self, new_appointment))]
     pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
         let appointment = sqlx::query_as::<_, Appointment>(
-            "insert into appointments (name, description, start_date, end_date, notes, meeting_partners,  client_attendees, is_completed,
-                user_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *",
+            "insert into appointments (name, description, start_date, end_date, meeting_partners, client_attendees, is_completed,
+                id_user, id_note, id_project, id_lead, id_contact) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *",
         )
         .bind(new_appointment.name)
         .bind(new_appointment.description)
         .bind(new_appointment.start_date)
         .bind(new_appointment.end_date)
-        .bind(new_appointment.notes)
         .bind(json!(new_appointment.meeting_partners))
         .bind(json!(new_appointment.client_attendees))
         .bind(new_appointment.is_completed)
-        .bind(new_appointment.user_id)
+        .bind(new_appointment.id_user)
+        .bind(new_appointment.id_note)
+        .bind(new_appointment.id_project)
+        .bind(new_appointment.id_lead)
+        .bind(new_appointment.id_contact)
         .fetch_one(&*self.pool)
         .await?;
 
@@ -48,23 +51,29 @@ impl AppointmentRepository {
         &self,
         user_id: Uuid,
         appointment: UpdateAppointment,
-        hashing: &CryptoService,
+        id_appointment: Uuid,
     ) -> Result<Appointment> {
-        let user = sqlx::query_as::<_, Appointment>(
-            "update appointments set name = $2, description = $3, start_date = $4, end_date = $5,
-            notes = $6, meeting_partners = $7, client_attendees = $8 where id = $1 returning *",
+        let appointment = sqlx::query_as::<_, Appointment>(
+            "update appointments set name = $1, description = $2, start_date = $3, end_date = $4, meeting_partners = $5, client_attendees = $6,
+             is_completed = $7, id_user = $8, id_note = $9, id_project = $10, id_lead = $11, id_contact = $12 where id_user = $13 and id = $14 returning *",
         )
-        .bind(user_id)
         .bind(appointment.name)
         .bind(appointment.description)
         .bind(appointment.start_date)
         .bind(appointment.end_date)
-        .bind(appointment.notes)
         .bind(json!(appointment.meeting_partners))
-        .bind(appointment.client_attendees)
+        .bind(json!(appointment.client_attendees))
+        .bind(appointment.is_completed)
+        .bind(appointment.id_user)
+        .bind(appointment.id_note)
+        .bind(appointment.id_project)
+        .bind(appointment.id_lead)
+        .bind(appointment.id_contact)
+        .bind(user_id)
+        .bind(id_appointment)
         .fetch_one(&*self.pool)
         .await?;
-        Ok(user)
+        Ok(appointment)
     }
 
     #[instrument(skip(self))]
@@ -79,14 +88,20 @@ impl AppointmentRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn find_by_id(&self, id: Uuid) -> Result<Option<Appointment>> {
-        let maybe_appointment =
-            sqlx::query_as::<_, Appointment>("select * from appointment where id = $1")
-                .bind(id)
-                .fetch_optional(&*self.pool)
-                .await?;
+    pub async fn find_by_id(
+        &self,
+        id_user: Uuid,
+        id_appointment: Uuid,
+    ) -> Result<Option<Appointment>> {
+        let appointment = sqlx::query_as::<_, Appointment>(
+            "select * from appointment where id = $2 and id_user = $1",
+        )
+        .bind(id_user)
+        .bind(id_appointment)
+        .fetch_optional(&*self.pool)
+        .await?;
 
-        Ok(maybe_appointment)
+        Ok(appointment)
     }
 }
 impl FromRequest for AppointmentRepository {
