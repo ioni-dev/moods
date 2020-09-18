@@ -4,7 +4,7 @@ CREATE TABLE "comments"
 (
  "id"                uuid DEFAULT uuid_generate_v4(),
  "content"           varchar NOT NULL,
- "attachment_url"    json NULL,
+ "attachment_url"    jsonb NULL,
  "id_user"           uuid NULL,
  "id_employee"       uuid NULL,
  "id_task"           uuid NULL,
@@ -15,7 +15,7 @@ CREATE TABLE "comments"
  CONSTRAINT "PK_comment" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" ),
  CONSTRAINT "FK_employee" FOREIGN KEY ( "id_employee" ) REFERENCES "employees" ( "id" ),
- CONSTRAINT "FK_task" FOREIGN KEY ( "id_task" ) REFERENCES "tasks" ( "id" )
+ CONSTRAINT "FK_task" FOREIGN KEY ( "id_task" ) REFERENCES "tasks" ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" )
 );
 

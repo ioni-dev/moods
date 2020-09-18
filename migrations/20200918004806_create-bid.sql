@@ -5,11 +5,11 @@ CREATE TABLE "bids"
 (
  "id"                       uuid DEFAULT uuid_generate_v4(),
  "title"                    varchar NOT NULL,
- "attachments_url"          json NULL,
- "status"                   status_tag_enum  NOT NULL DEFAULT 'Open'
+ "attachments_url"          jsonb NULL,
+ "status"                   status_tag_enum  NOT NULL DEFAULT 'Open',
  "due_date"                 TIMESTAMP NULL,
  "id_primary_bidding_contact"  uuid NOT NULL,
- "bidding_cc_list"          json NULL,
+ "bidding_cc_list"          jsonb NULL,
  "project_information"      text NOT NULL,
  "id_proposal"              uuid NOT NULL,
  "created_at"               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

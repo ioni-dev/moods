@@ -13,14 +13,14 @@ CREATE TABLE "leads"
  "address"              varchar NULL,
  "lat"                  DOUBLE PRECISION NULL,
  "long"                 DOUBLE PRECISION NULL,
- "attachment_path"      JSON NULL,
+ "attachment_path"      jsonb NULL,
  "created_at"           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_proposal"          uuid NULL,
  "id_note"              uuid NULL,
  "id_contact"           uuid NULL,
 
- CONSTRAINT "PK_lead" PRIMARY KEY ( "id" )
+ CONSTRAINT "PK_lead" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_proposal" FOREIGN KEY ( "id_proposal" ) REFERENCES "proposals" ( "id" ),
  CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" ),
  CONSTRAINT "FK_contact" FOREIGN KEY ( "id_contact" ) REFERENCES "contacts" ( "id" )

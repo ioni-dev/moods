@@ -21,8 +21,8 @@ CREATE TABLE "tasks"
 
  CONSTRAINT "PK_task" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" ),
- CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" ),
- CONSTRAINT "FK_comment" FOREIGN KEY ( "id_comment" ) REFERENCES "comments" ( "id" ),
+--  CONSTRAINT "FK_project" FOREIGN KEY ( "id_project" ) REFERENCES "projects" ( "id" ),
+--  CONSTRAINT "FK_comment" FOREIGN KEY ( "id_comment" ) REFERENCES "comments" ( "id" ),
  CONSTRAINT "FK_note" FOREIGN KEY ( "id_note" ) REFERENCES "notes" ( "id" ),
  CONSTRAINT "FK_user" FOREIGN KEY ( "id_user" ) REFERENCES "users" ( "id" )
 );
