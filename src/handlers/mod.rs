@@ -7,7 +7,7 @@ mod user;
 
 use crate::errors::AppError;
 use actix_web::{web, HttpResponse};
-use appointment::{appointment, create_appointment, get_all_appointments, update_appointment};
+use appointment::{create_appointment, get_all_appointments, get_appointment, update_appointment};
 use auth::auth;
 use contact::{create_contact, get_all_contacts};
 use event::get_all_events;
@@ -42,7 +42,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         web::resource("/create-appointment").route(web::post().to(create_appointment));
 
     let appointment = web::resource("/appointment")
-        .route(web::get().to(appointment))
+        .route(web::get().to(get_appointment))
         .route(web::post().to(update_appointment));
 
     let all_appointments =

@@ -21,10 +21,8 @@ pub async fn get_all_appointments(
     user: AuthenticatedUser,
     repository: AppointmentRepository,
 ) -> AppResponse {
-    let appointments = repository
-        .get_all(user.0)
-        .await?
-        .ok_or(AppError::INTERNAL_ERROR)?;
+    let appointments = repository.get_all(user.0).await;
+    // .ok_or(AppError::INTERNAL_ERROR);
 
     Ok(HttpResponse::Ok().json(appointments))
 }
@@ -106,20 +104,19 @@ pub async fn update_appointment(
     }?;
 
     let appointment = repository
-        .update_appointment(user.0, appointment, id_appointment)
+        .update_appointment(user.0, appointment.0, id_appointment)
         .await?;
 
     Ok(HttpResponse::Ok().json(appointment))
 }
 
 #[instrument[skip(repository)]]
-pub async fn appointment(
+pub async fn get_appointment(
     user: AuthenticatedUser,
-    appointment: Appointment,
     repository: AppointmentRepository,
 ) -> AppResponse {
     let appointment = repository
-        .find_by_id(user.0, appointment.id)
+        .find_by_id(user.0)
         .await?
         .ok_or(AppError::INTERNAL_ERROR)?;
 

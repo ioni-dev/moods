@@ -5,6 +5,7 @@ authors = ["ioni_dev <ioni_dev@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+anyhow = "1.0"
 config = "0.10"
 dotenv = "0.15"
 actix-web = "3"

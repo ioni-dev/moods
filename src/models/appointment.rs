@@ -49,7 +49,7 @@ pub struct NewAppointment {
     pub id_contact: Option<Uuid>,
 }
 
-#[derive(Debug, sqlx::FromRow, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct UpdateAppointment {
     #[validate(length(min = 3))]
     pub name: String,

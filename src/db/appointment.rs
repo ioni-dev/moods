@@ -76,16 +76,15 @@ impl AppointmentRepository {
         Ok(appointment)
     }
 
-    #[instrument(skip(self))]
-    pub async fn get_all(&self, id: Uuid) -> Result<Option<Appointment>> {
-        let all_appointments =
-            sqlx::query_as::<_, Appointment>("select * from appointments where user_id = $1")
-                .bind(id)
-                .fetch_optional(&*self.pool)
-                .await?;
+    // #[instrument(skip(self))]
+    // pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<()> {
+    //     let all_appointments = sqlx::query!("select * from appointments where id_user = $1")
+    //         .bind(id_user)
+    //         .fetch_all(&*self.pool)
+    //         .await?;
 
-        Ok(all_appointments)
-    }
+    //     Ok(all_appointments)
+    // }
 
     #[instrument(skip(self))]
     pub async fn find_by_id(
@@ -102,6 +101,26 @@ impl AppointmentRepository {
         .await?;
 
         Ok(appointment)
+    }
+
+    #[instrument(skip(self))]
+    pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<Vec<Appointment>> {
+        // let relevant_appointments = sqlx::query!("select * from appointments where id_user = $1")
+        //     .bind(id_user)
+        //     .fetch_all(&*self.pool)
+        //     .await?;
+
+        let relevant_appointments = sqlx::query!(
+            r#"
+        SELECT *
+        FROM appointments
+        where id_user = $1"#,
+            id_user
+        )
+        .fetch_all(&*self.pool)
+        .await?;
+
+        Ok(relevant_appointments)
     }
 }
 impl FromRequest for AppointmentRepository {
