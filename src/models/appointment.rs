@@ -8,11 +8,11 @@ use validator::Validate;
 
 #[derive(sqlx::Type, sqlx::FromRow, Serialize, Deserialize, Debug)]
 pub struct Attendees {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: String,
+    pub name: String,
 }
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow, Serialize, Deserialize)]
 pub struct Appointment {
     pub id: Uuid,
     pub name: String,

@@ -1,18 +1,18 @@
 use crate::{
     config::crypto::CryptoService,
     errors::AppError,
-    models::appointment::{Appointment, NewAppointment, UpdateAppointment},
+    models::appointment::{Appointment, Attendees, NewAppointment, UpdateAppointment},
 };
 use actix_web::{web::Data, FromRequest};
 use color_eyre::Result;
 use futures::future::{ready, Ready};
-use serde_json::json;
+// use serde_json::Value;
+use serde_json::{json, Value, from_value};
 use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 use std::{ops::Deref, sync::Arc};
 use tracing::instrument;
 use uuid::Uuid;
-
 pub struct AppointmentRepository {
     pool: Arc<PgPool>,
 }
@@ -110,7 +110,9 @@ impl AppointmentRepository {
         //     .fetch_all(&*self.pool)
         //     .await?;
 
-        let relevant_appointments = sqlx::query!(
+        let mut all_appointments = vec![];
+
+        let result = sqlx::query!(
             r#"
         SELECT *
         FROM appointments
@@ -120,7 +122,28 @@ impl AppointmentRepository {
         .fetch_all(&*self.pool)
         .await?;
 
-        Ok(relevant_appointments)
+        for appointment in result {
+            all_appointments.push(Appointment {
+                id: appointment.id,
+                name: appointment.name,
+                description: appointment.description,
+                start_date: appointment.start_date,
+                end_date: appointment.end_date,
+                // meeting_partners: appointment.meeting_partners,
+                meeting_partners: Vec<Attendees> = serde_json::from_value(appointment.meeting_partners)?,
+                client_attendees: appointment.client_attendees,
+                is_completed: appointment.is_completed,
+                created_at: appointment.created_at,
+                updated_at: appointment.updated_at,
+                id_user: appointment.id_user,
+                id_note: appointment.id_note,
+                id_project: appointment.id_project,
+                id_lead: appointment.id_lead,
+                id_contact: appointment.id_contact,
+            });
+        }
+
+        Ok(all_appointments)
     }
 }
 impl FromRequest for AppointmentRepository {
