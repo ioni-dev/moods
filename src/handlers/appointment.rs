@@ -21,7 +21,8 @@ pub async fn get_all_appointments(
     user: AuthenticatedUser,
     repository: AppointmentRepository,
 ) -> AppResponse {
-    let appointments: Vec<Appointment> = repository.get_all(user.0).await;
+    let appointments = repository.get_all(user.0)
+    .await;
     // .ok_or(AppError::INTERNAL_ERROR);
 
     Ok(HttpResponse::Ok().json(appointments))

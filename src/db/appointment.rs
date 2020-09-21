@@ -4,10 +4,11 @@ use crate::{
     models::appointment::{Appointment, Attendees, NewAppointment, UpdateAppointment},
 };
 use actix_web::{web::Data, FromRequest};
+use actix_web::{HttpResponse, HttpRequest, Responder, Error};
 use color_eyre::Result;
 use futures::future::{ready, Ready};
 // use serde_json::Value;
-use serde_json::{json, Value, from_value};
+use serde_json::{json};
 use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 use std::{ops::Deref, sync::Arc};
@@ -76,16 +77,6 @@ impl AppointmentRepository {
         Ok(appointment)
     }
 
-    // #[instrument(skip(self))]
-    // pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<()> {
-    //     let all_appointments = sqlx::query!("select * from appointments where id_user = $1")
-    //         .bind(id_user)
-    //         .fetch_all(&*self.pool)
-    //         .await?;
-
-    //     Ok(all_appointments)
-    // }
-
     #[instrument(skip(self))]
     pub async fn find_by_id(
         &self,
@@ -105,32 +96,43 @@ impl AppointmentRepository {
 
     #[instrument(skip(self))]
     pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<Vec<Appointment>> {
-        // let relevant_appointments = sqlx::query!("select * from appointments where id_user = $1")
-        //     .bind(id_user)
-        //     .fetch_all(&*self.pool)
-        //     .await?;
+        let result: Vec<Appointment> = sqlx::query_as::<_,Appointment>("select * from appointments where id_user = $1")
+            .bind(id_user)
+            .fetch_all(&*self.pool)
+            .await?;
 
         let mut all_appointments = vec![];
+        let mut partners:Vec<Attendees> = vec![];
 
-        let result = sqlx::query!(
-            r#"
-        SELECT *
-        FROM appointments
-        where id_user = $1"#,
-            id_user
-        )
-        .fetch_all(&*self.pool)
-        .await?;
+        // let result: Vec<Appointment> = sqlx::query!(
+        //     r#"
+        // SELECT *
+        // FROM appointments
+        // where id_user = $1"#,
+        //     id_user
+        // )
+        // .fetch_all(&*self.pool)
+        // .await?;
 
         for appointment in result {
+
+            // let mut foo3: Vec<Attendees> = serde_json::from_value(appointment.meeting_partners).unwrap()?;
+
+            // // let mut u : Vec<Attendees>  = serde_json::from_value(appointment.meeting_partners).unwrap();
+            // for mt in appointment.meeting_partners {
+            //     partners.push(Attendees {
+            //         id: mt.id,
+            //         name: mt.name
+            //     });
+            // }
+
             all_appointments.push(Appointment {
                 id: appointment.id,
                 name: appointment.name,
                 description: appointment.description,
                 start_date: appointment.start_date,
                 end_date: appointment.end_date,
-                // meeting_partners: appointment.meeting_partners,
-                meeting_partners: Vec<Attendees> = serde_json::from_value(appointment.meeting_partners)?,
+                meeting_partners: appointment.meeting_partners,
                 client_attendees: appointment.client_attendees,
                 is_completed: appointment.is_completed,
                 created_at: appointment.created_at,
@@ -146,6 +148,10 @@ impl AppointmentRepository {
         Ok(all_appointments)
     }
 }
+
+
+
+
 impl FromRequest for AppointmentRepository {
     type Error = AppError;
     type Future = Ready<Result<Self, Self::Error>>;
