@@ -4,11 +4,11 @@ use crate::{
     models::appointment::{Appointment, Attendees, NewAppointment, UpdateAppointment},
 };
 use actix_web::{web::Data, FromRequest};
-use actix_web::{HttpResponse, HttpRequest, Responder, Error};
+use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use color_eyre::Result;
 use futures::future::{ready, Ready};
 // use serde_json::Value;
-use serde_json::{json};
+use serde_json::json;
 use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 use std::{ops::Deref, sync::Arc};
@@ -96,13 +96,14 @@ impl AppointmentRepository {
 
     #[instrument(skip(self))]
     pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<Vec<Appointment>> {
-        let result: Vec<Appointment> = sqlx::query_as::<_,Appointment>("select * from appointments where id_user = $1")
-            .bind(id_user)
-            .fetch_all(&*self.pool)
-            .await?;
+        let result: Vec<Appointment> =
+            sqlx::query_as::<_, Appointment>("select * from appointments where id_user = $1")
+                .bind(id_user)
+                .fetch_all(&*self.pool)
+                .await?;
 
         let mut all_appointments = vec![];
-        let mut partners:Vec<Attendees> = vec![];
+        let mut partners: Vec<Attendees> = vec![];
 
         // let result: Vec<Appointment> = sqlx::query!(
         //     r#"
@@ -115,7 +116,6 @@ impl AppointmentRepository {
         // .await?;
 
         for appointment in result {
-
             // let mut foo3: Vec<Attendees> = serde_json::from_value(appointment.meeting_partners).unwrap()?;
 
             // // let mut u : Vec<Attendees>  = serde_json::from_value(appointment.meeting_partners).unwrap();
@@ -148,9 +148,6 @@ impl AppointmentRepository {
         Ok(all_appointments)
     }
 }
-
-
-
 
 impl FromRequest for AppointmentRepository {
     type Error = AppError;

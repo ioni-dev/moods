@@ -21,10 +21,9 @@ pub async fn get_all_appointments(
     user: AuthenticatedUser,
     repository: AppointmentRepository,
 ) -> AppResponse {
-    let appointments = repository.get_all(user.0)
-    .await;
+    let appointments = repository.get_all(user.0).await;
     // .ok_or(AppError::INTERNAL_ERROR);
-
+    let serialized = serde_json::to_string(&appointments).unwrap();
     Ok(HttpResponse::Ok().json(appointments))
 }
 
