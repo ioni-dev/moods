@@ -38,7 +38,6 @@ pub struct Attendees {
 //     }
 // }
 
-
 #[derive(Debug, sqlx::FromRow, Serialize, Deserialize)]
 pub struct Appointment {
     pub id: Uuid,
@@ -46,8 +45,8 @@ pub struct Appointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Json<Attendees>>,
-    pub client_attendees: Option<Json<Attendees>>,
+    pub meeting_partners: Option<Vec<Json<Attendees>>>,
+    pub client_attendees: Option<Vec<Json<Attendees>>>,
     pub is_completed: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -66,8 +65,8 @@ pub struct NewAppointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Json<Attendees>>,
-    pub client_attendees: Option<Json<Attendees>>,
+    pub meeting_partners: Option<Vec<Json<Attendees>>>,
+    pub client_attendees: Option<Vec<Json<Attendees>>>,
     pub is_completed: bool,
     pub id_user: Option<Uuid>,
     pub id_note: Option<Uuid>,
@@ -84,8 +83,8 @@ pub struct UpdateAppointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Json<Attendees>>,
-    pub client_attendees: Option<Json<Attendees>>,
+    pub meeting_partners: Option<Vec<Json<Attendees>>>,
+    pub client_attendees: Option<Vec<Json<Attendees>>>,
     pub is_completed: bool,
     pub id_user: Option<Uuid>,
     pub id_note: Option<Uuid>,

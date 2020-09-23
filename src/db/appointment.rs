@@ -7,13 +7,14 @@ use actix_web::{web::Data, FromRequest};
 use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use color_eyre::Result;
 use futures::future::{ready, Ready};
-// use serde_json::Value;
 use serde_json::json;
 use sqlx::postgres::PgQueryAs;
+use sqlx::types::Json;
 use sqlx::PgPool;
 use std::{ops::Deref, sync::Arc};
 use tracing::instrument;
 use uuid::Uuid;
+
 pub struct AppointmentRepository {
     pool: Arc<PgPool>,
 }
@@ -25,6 +26,8 @@ impl AppointmentRepository {
 
     #[instrument(skip(self, new_appointment))]
     pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
+        let meeting_partners = serde_json::to_string(&new_appointment.meeting_partners)?;
+        let client_attendees = serde_json::to_string(&new_appointment.client_attendees)?;
         let appointment = sqlx::query_as::<_, Appointment>(
             "insert into appointments (name, description, start_date, end_date, meeting_partners, client_attendees, is_completed,
                 id_user, id_note, id_project, id_lead, id_contact) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *",
@@ -33,8 +36,8 @@ impl AppointmentRepository {
         .bind(new_appointment.description)
         .bind(new_appointment.start_date)
         .bind(new_appointment.end_date)
-        .bind(json!(new_appointment.meeting_partners))
-        .bind(json!(new_appointment.client_attendees))
+        .bind(&meeting_partners)
+        .bind(&client_attendees)
         .bind(new_appointment.is_completed)
         .bind(new_appointment.id_user)
         .bind(new_appointment.id_note)
@@ -95,36 +98,25 @@ impl AppointmentRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id_user: Uuid) -> anyhow::Result<Vec<Appointment>> {
-        let result: Vec<Appointment> =
-            sqlx::query_as::<_, Appointment>("select * from appointments where id_user = $1")
-                .bind(id_user)
-                .fetch_all(&*self.pool)
-                .await?;
-
+    pub async fn get_all(&self, id_user: Uuid) -> Result<Vec<Appointment>> {
         let mut all_appointments = vec![];
-        let mut partners: Vec<Attendees> = vec![];
 
-        // let result: Vec<Appointment> = sqlx::query!(
-        //     r#"
-        // SELECT *
-        // FROM appointments
-        // where id_user = $1"#,
-        //     id_user
-        // )
-        // .fetch_all(&*self.pool)
-        // .await?;
+        let result = sqlx::query!(
+            r#"
+        SELECT *
+        FROM appointments
+        where id_user = $1"#,
+            id_user
+        )
+        .fetch_all(&*self.pool)
+        .await?;
 
         for appointment in result {
-            // let mut foo3: Vec<Attendees> = serde_json::from_value(appointment.meeting_partners).unwrap()?;
+            let partners: Option<Vec<Json<Attendees>>> =
+                serde_json::from_str(&appointment.meeting_partners.unwrap().to_string())?;
 
-            // // let mut u : Vec<Attendees>  = serde_json::from_value(appointment.meeting_partners).unwrap();
-            // for mt in appointment.meeting_partners {
-            //     partners.push(Attendees {
-            //         id: mt.id,
-            //         name: mt.name
-            //     });
-            // }
+            let clients: Option<Vec<Json<Attendees>>> =
+                serde_json::from_str(&appointment.client_attendees.unwrap().to_string())?;
 
             all_appointments.push(Appointment {
                 id: appointment.id,
@@ -132,8 +124,8 @@ impl AppointmentRepository {
                 description: appointment.description,
                 start_date: appointment.start_date,
                 end_date: appointment.end_date,
-                meeting_partners: appointment.meeting_partners,
-                client_attendees: appointment.client_attendees,
+                meeting_partners: partners,
+                client_attendees: clients,
                 is_completed: appointment.is_completed,
                 created_at: appointment.created_at,
                 updated_at: appointment.updated_at,

@@ -21,9 +21,9 @@ pub async fn get_all_appointments(
     user: AuthenticatedUser,
     repository: AppointmentRepository,
 ) -> AppResponse {
-    let appointments = repository.get_all(user.0).await;
+    let appointments = repository.get_all(user.0).await?;
     // .ok_or(AppError::INTERNAL_ERROR);
-    let serialized = serde_json::to_string(&appointments).unwrap();
+
     Ok(HttpResponse::Ok().json(appointments))
 }
 
@@ -113,10 +113,11 @@ pub async fn update_appointment(
 #[instrument[skip(repository)]]
 pub async fn get_appointment(
     user: AuthenticatedUser,
+    id_appointment: Uuid,
     repository: AppointmentRepository,
 ) -> AppResponse {
     let appointment = repository
-        .find_by_id(user.0)
+        .find_by_id(user.0, id_appointment)
         .await?
         .ok_or(AppError::INTERNAL_ERROR)?;
 
