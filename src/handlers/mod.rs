@@ -42,8 +42,9 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         web::resource("/create-appointment").route(web::post().to(create_appointment));
 
     let appointment = web::resource("/appointment")
-        .route(web::get().to(get_appointment))
-        .route(web::post().to(update_appointment));
+    .route(web::post().to(update_appointment));
+        // .route(web::get().to(get_appointment))
+
 
     let all_appointments =
         web::resource("/all-appointments").route(web::get().to(get_all_appointments));

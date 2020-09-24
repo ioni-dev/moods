@@ -85,7 +85,7 @@ pub async fn create_appointment(
 pub async fn update_appointment(
     user: AuthenticatedUser,
     appointment: Json<UpdateAppointment>,
-    id_appointment: Uuid,
+    id_appointment: String,
     repository: AppointmentRepository,
 ) -> AppResponse {
     match appointment.validate() {
@@ -114,16 +114,16 @@ pub async fn update_appointment(
     Ok(HttpResponse::Ok().json(appointment))
 }
 
-#[instrument[skip(repository)]]
-pub async fn get_appointment(
-    user: AuthenticatedUser,
-    id_appointment: Uuid,
-    repository: AppointmentRepository,
-) -> AppResponse {
-    let appointment = repository
-        .find_by_id(user.0, id_appointment)
-        .await?
-        .ok_or(AppError::INTERNAL_ERROR)?;
+// #[instrument[skip(repository)]]
+// pub async fn get_appointment(
+//     user: AuthenticatedUser,
+//     id_appointment: String,
+//     repository: AppointmentRepository,
+// ) -> AppResponse {
+//     let appointment = repository
+//         .find_by_id(user.0, id_appointment)
+//         .await?
+//         .ok_or(AppError::INTERNAL_ERROR)?;
 
-    Ok(HttpResponse::Ok().json(appointment))
-}
+//     Ok(HttpResponse::Ok().json(appointment))
+// }

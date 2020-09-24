@@ -22,9 +22,10 @@ impl EventRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id: Uuid) -> Result<Option<Event>> {
-        let all_events = sqlx::query_as::<_, Event>("select * from event where id = $1")
-            .bind(id)
+    pub async fn get_all(&self, id_user: String) -> Result<Option<Event>> {
+        let id_user = uuid::Uuid::parse_str(&id_user)?;
+        let all_events = sqlx::query_as::<_, Event>("select * from event where id_user = $1")
+            .bind(id_user)
             .fetch_optional(&*self.pool)
             .await?;
 

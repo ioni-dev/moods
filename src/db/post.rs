@@ -42,9 +42,10 @@ impl PostRepository {
     //     - Add a more complex query to use the bridge table to bring  event table posts to the current user
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id: Uuid) -> Result<Option<Post>> {
+    pub async fn get_all(&self, id_user: String) -> Result<Option<Post>> {
+        let id_user = uuid::Uuid::parse_str(&id_user)?;
         let all_post = sqlx::query_as::<_, Event>("select * from posts where id = $1")
-            .bind(id)
+            .bind(id_user)
             .fetch_optional(&*self.pool)
             .await?;
 
