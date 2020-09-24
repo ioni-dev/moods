@@ -12,7 +12,7 @@ use actix_web::{
 };
 use color_eyre::Result;
 use sqlx::{error::DatabaseError, postgres::PgError};
-use tracing::{debug, info, instrument};
+use tracing::{debug, instrument};
 use uuid::Uuid;
 use validator::Validate;
 
@@ -21,7 +21,7 @@ pub async fn get_all_appointments(
     user: AuthenticatedUser,
     repository: AppointmentRepository,
 ) -> AppResponse {
-    let appointments = repository.get_all(user.0).await?;
+    let appointments = repository.get_all(user.0.to_string()).await?;
     // .ok_or(AppError::INTERNAL_ERROR);
 
     Ok(HttpResponse::Ok().json(appointments))
@@ -104,7 +104,11 @@ pub async fn update_appointment(
     }?;
 
     let appointment = repository
-        .update_appointment(user.0, appointment.0, id_appointment)
+        .update_appointment(
+            user.0.to_string(),
+            appointment.0,
+            id_appointment.to_string(),
+        )
         .await?;
 
     Ok(HttpResponse::Ok().json(appointment))

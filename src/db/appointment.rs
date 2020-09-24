@@ -26,8 +26,6 @@ impl AppointmentRepository {
 
     #[instrument(skip(self, new_appointment))]
     pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
-        let meeting_partners = serde_json::to_string(&new_appointment.meeting_partners)?;
-        let client_attendees = serde_json::to_string(&new_appointment.client_attendees)?;
         let appointment = sqlx::query_as::<_, Appointment>(
             "insert into appointments (name, description, start_date, end_date, meeting_partners, client_attendees, is_completed,
                 id_user, id_note, id_project, id_lead, id_contact) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *",
@@ -36,8 +34,8 @@ impl AppointmentRepository {
         .bind(new_appointment.description)
         .bind(new_appointment.start_date)
         .bind(new_appointment.end_date)
-        .bind(&meeting_partners)
-        .bind(&client_attendees)
+        .bind(new_appointment.meeting_partners)
+        .bind(new_appointment.client_attendees)
         .bind(new_appointment.is_completed)
         .bind(new_appointment.id_user)
         .bind(new_appointment.id_note)
@@ -53,10 +51,13 @@ impl AppointmentRepository {
 
     pub async fn update_appointment(
         &self,
-        user_id: Uuid,
+        id_user: String,
         appointment: UpdateAppointment,
-        id_appointment: Uuid,
+        id_appointment: String,
     ) -> Result<Appointment> {
+        let id_user = uuid::Uuid::parse_str(&id_user)?;
+        let id_appointment = uuid::Uuid::parse_str(&id_appointment)?;
+
         let appointment = sqlx::query_as::<_, Appointment>(
             "update appointments set name = $1, description = $2, start_date = $3, end_date = $4, meeting_partners = $5, client_attendees = $6,
              is_completed = $7, id_user = $8, id_note = $9, id_project = $10, id_lead = $11, id_contact = $12 where id_user = $13 and id = $14 returning *",
@@ -73,7 +74,7 @@ impl AppointmentRepository {
         .bind(appointment.id_project)
         .bind(appointment.id_lead)
         .bind(appointment.id_contact)
-        .bind(user_id)
+        .bind(id_user)
         .bind(id_appointment)
         .fetch_one(&*self.pool)
         .await?;
@@ -83,9 +84,11 @@ impl AppointmentRepository {
     #[instrument(skip(self))]
     pub async fn find_by_id(
         &self,
-        id_user: Uuid,
-        id_appointment: Uuid,
+        id_user: String,
+        id_appointment: String,
     ) -> Result<Option<Appointment>> {
+        let id_user = uuid::Uuid::parse_str(&id_user)?;
+        let id_appointment = uuid::Uuid::parse_str(&id_appointment)?;
         let appointment = sqlx::query_as::<_, Appointment>(
             "select * from appointment where id = $2 and id_user = $1",
         )
@@ -98,7 +101,8 @@ impl AppointmentRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id_user: Uuid) -> Result<Vec<Appointment>> {
+    pub async fn get_all(&self, id_user: String) -> Result<Vec<Appointment>> {
+        let id_user = uuid::Uuid::parse_str(&id_user)?;
         let mut all_appointments = vec![];
 
         let result = sqlx::query!(
@@ -112,10 +116,10 @@ impl AppointmentRepository {
         .await?;
 
         for appointment in result {
-            let partners: Option<Vec<Json<Attendees>>> =
+            let partners: Option<Json<Vec<Attendees>>> =
                 serde_json::from_str(&appointment.meeting_partners.unwrap().to_string())?;
 
-            let clients: Option<Vec<Json<Attendees>>> =
+            let clients: Option<Json<Vec<Attendees>>> =
                 serde_json::from_str(&appointment.client_attendees.unwrap().to_string())?;
 
             all_appointments.push(Appointment {

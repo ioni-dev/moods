@@ -45,8 +45,8 @@ pub struct Appointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Vec<Json<Attendees>>>,
-    pub client_attendees: Option<Vec<Json<Attendees>>>,
+    pub meeting_partners: Option<Json<Vec<Attendees>>>,
+    pub client_attendees: Option<Json<Vec<Attendees>>>,
     pub is_completed: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -57,7 +57,7 @@ pub struct Appointment {
     pub id_contact: Option<Uuid>,
 }
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct NewAppointment {
     #[validate(length(min = 3))]
     pub name: String,
@@ -65,8 +65,8 @@ pub struct NewAppointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Vec<Json<Attendees>>>,
-    pub client_attendees: Option<Vec<Json<Attendees>>>,
+    pub meeting_partners: Option<Json<Vec<Attendees>>>,
+    pub client_attendees: Option<Json<Vec<Attendees>>>,
     pub is_completed: bool,
     pub id_user: Option<Uuid>,
     pub id_note: Option<Uuid>,
@@ -83,8 +83,8 @@ pub struct UpdateAppointment {
     pub description: String,
     pub start_date: Option<NaiveDateTime>,
     pub end_date: Option<NaiveDateTime>,
-    pub meeting_partners: Option<Vec<Json<Attendees>>>,
-    pub client_attendees: Option<Vec<Json<Attendees>>>,
+    pub meeting_partners: Option<Json<Vec<Attendees>>>,
+    pub client_attendees: Option<Json<Vec<Attendees>>>,
     pub is_completed: bool,
     pub id_user: Option<Uuid>,
     pub id_note: Option<Uuid>,
