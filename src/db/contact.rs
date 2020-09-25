@@ -9,7 +9,7 @@ use sqlx::postgres::PgQueryAs;
 use sqlx::PgPool;
 use std::{ops::Deref, sync::Arc};
 use tracing::instrument;
-
+use uuid::Uuid;
 pub struct ContactRepository {
     pool: Arc<PgPool>,
 }
@@ -50,8 +50,8 @@ impl ContactRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id_contact: String) -> Result<Option<Contact>> {
-        let id_contact = uuid::Uuid::parse_str(&id_contact)?;
+    pub async fn get_all(&self, id_contact: Uuid) -> Result<Option<Contact>> {
+        // let id_contact = uuid::Uuid::parse_str(&id_contact)?;
         let all_contacts =
             sqlx::query_as::<_, Contact>("select * from contacts where user_id = $1")
                 .bind(id_contact)

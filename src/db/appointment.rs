@@ -84,10 +84,10 @@ impl AppointmentRepository {
     #[instrument(skip(self))]
     pub async fn find_by_id(
         &self,
-        id_user: String,
+        id_user: Uuid,
         id_appointment: String,
     ) -> Result<Option<Appointment>> {
-        let id_user = uuid::Uuid::parse_str(&id_user)?;
+        // let id_user = uuid::Uuid::parse_str(&id_user)?;
         let id_appointment = uuid::Uuid::parse_str(&id_appointment)?;
         let appointment = sqlx::query_as::<_, Appointment>(
             "select * from appointment where id = $2 and id_user = $1",
