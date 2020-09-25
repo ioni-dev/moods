@@ -21,10 +21,8 @@ pub async fn get_all_contacts(
     user: AuthenticatedUser,
     repository: ContactRepository,
 ) -> AppResponse {
-    let contacts = repository
-        .get_all(user.0)
-        .await?
-        .ok_or(AppError::INTERNAL_ERROR)?;
+    let contacts = repository.get_all(user.0).await?;
+    // .ok_or(AppError::INTERNAL_ERROR)?;
 
     Ok(HttpResponse::Ok().json(contacts))
 }
@@ -34,7 +32,6 @@ pub async fn create_contact(
     contact: Json<NewContact>,
     repository: ContactRepository,
 ) -> AppResponse {
-    info!("testing contact params");
     match contact.validate() {
         Ok(_) => Ok(()),
         Err(errors) => {
@@ -47,13 +44,8 @@ pub async fn create_contact(
                 )
             } else if error_map.contains_key("last_name") {
                 format!("Invalid last name, \"{}\" is to short", contact.last_name)
-            } else if error_map.contains_key("description") {
-                format!(
-                    "Invalid description, \"{}\" is to short",
-                    contact.description
-                )
-            } else if error_map.contains_key("company") {
-                format!("Invalid description, \"{}\" is to short", contact.company)
+            } else if error_map.contains_key("company_name") {
+                format!("Invalid name, \"{:?}\" is to short", contact.company_name)
             } else {
                 "Invalid input.".to_string()
             };
@@ -76,14 +68,8 @@ pub async fn create_contact(
                     })?;
 
             let error = match (pg_error.code(), pg_error.column_name()) {
-                (Some(db::UNIQUE_VIOLATION_CODE), Some("email")) => {
-                    AppError::INVALID_INPUT.message("Email address already exists.".to_string())
-                }
-                (Some(db::UNIQUE_VIOLATION_CODE), Some("name")) => {
-                    AppError::INVALID_INPUT.message("name already exists.".to_string())
-                }
-                (Some(db::UNIQUE_VIOLATION_CODE), None) => {
-                    AppError::INVALID_INPUT.message("name or email already exists.".to_string())
+                (Some(db::UNIQUE_VIOLATION_CODE), Some("cell_phone_number")) => {
+                    AppError::INVALID_INPUT.message("Phone number already exists.".to_string())
                 }
                 _ => {
                     debug!("Error creating contact. {:?}", pg_error);
@@ -93,4 +79,31 @@ pub async fn create_contact(
             Err(error)
         }
     }
+}
+
+#[instrument[skip(repository)]]
+pub async fn update_contact(
+    user: AuthenticatedUser,
+    contact: Json<UpdateContact>,
+    id_contact: String,
+    repository: ContactRepository,
+) -> AppResponse {
+    match contact.validate() {
+        Ok(_) => Ok(()),
+        Err(errors) => {
+            let error_map = errors.field_errors();
+
+            let message = if error_map.contains_key("first_name") {
+                format!("Invalid name, too short",)
+            } else {
+                "Invalid input.".to_string()
+            };
+
+            Err(AppError::INVALID_INPUT.message(message))
+        }
+    }?;
+
+    let contact = repository.update_contact(id_contact, contact.0).await?;
+
+    Ok(HttpResponse::Ok().json(contact))
 }

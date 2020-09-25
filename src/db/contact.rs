@@ -22,26 +22,31 @@ impl ContactRepository {
     #[instrument(skip(self, new_contact))]
     pub async fn create(&self, new_contact: NewContact) -> Result<Contact> {
         let contact = sqlx::query_as::<_, Contact>(
-            "insert into contacts (first_name, middle_name, last_name, phone, linkedin, facebook,  twitter,
-                website, description, is_active, last_talked_to, birthday, company, company_website, avatar_url, last_consulted_at, organization_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) returning *",
+            "insert into contacts (first_name, middle_name, last_name, cell_phone_number, linkedin, facebook,  twitter,
+                website, position, logs, work_phone, is_active, last_talked_to, birthday, company_name, company_website, pic_url, last_consulted_at, 
+                id_organization, id_note, id_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) returning *",
         )
         .bind(new_contact.first_name)
         .bind(new_contact.middle_name)
         .bind(new_contact.last_name)
-        .bind(new_contact.phone)
+        .bind(new_contact.cell_phone_number)
         .bind(new_contact.linkedin)
         .bind(new_contact.facebook)
         .bind(new_contact.twitter)
         .bind(new_contact.website)
-        .bind(new_contact.description)
+        .bind(new_contact.position)
+        .bind(new_contact.logs)
+        .bind(new_contact.work_phone)
         .bind(new_contact.is_active)
         .bind(new_contact.last_talked_to)
         .bind(new_contact.birthday)
-        .bind(new_contact.company)
+        .bind(new_contact.company_name)
         .bind(new_contact.company_website)
-        .bind(new_contact.avatar_url)
+        .bind(new_contact.pic_url)
         .bind(new_contact.last_consulted_at)
-        .bind(new_contact.organization_id)
+        .bind(new_contact.id_organization)
+        .bind(new_contact.id_note)
+        .bind(new_contact.id_user)
         .fetch_one(&*self.pool)
         .await?;
 
@@ -50,15 +55,101 @@ impl ContactRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn get_all(&self, id_contact: Uuid) -> Result<Option<Contact>> {
-        // let id_contact = uuid::Uuid::parse_str(&id_contact)?;
-        let all_contacts =
-            sqlx::query_as::<_, Contact>("select * from contacts where user_id = $1")
-                .bind(id_contact)
-                .fetch_optional(&*self.pool)
-                .await?;
+    pub async fn get_all(&self, id_user: Uuid) -> Result<Vec<Contact>> {
+        let mut all_contacts = vec![];
+
+        let result = sqlx::query!(
+            r#"
+                SELECT *
+                FROM contacts
+                where id_user = $1"#,
+            id_user
+        )
+        .fetch_all(&*self.pool)
+        .await?;
+
+        for contact in result {
+            all_contacts.push(Contact {
+                id: contact.id,
+                first_name: contact.first_name,
+                middle_name: contact.middle_name,
+                last_name: contact.last_name,
+                cell_phone_number: contact.cell_phone_number,
+                linkedin: contact.linkedin,
+                facebook: contact.facebook,
+                twitter: contact.twitter,
+                website: contact.website,
+                position: contact.position,
+                logs: contact.logs,
+                work_phone: contact.work_phone,
+                is_active: contact.is_active,
+                last_talked_to: contact.last_talked_to,
+                birthday: contact.birthday,
+                company_name: contact.company_name,
+                company_website: contact.company_website,
+                pic_url: contact.pic_url,
+                last_consulted_at: contact.last_consulted_at,
+                created_at: contact.created_at,
+                updated_at: contact.updated_at,
+                id_organization: contact.id_organization,
+                id_note: contact.id_note,
+                id_user: contact.id_user,
+            })
+        }
 
         Ok(all_contacts)
+    }
+
+    pub async fn update_contact(&self, id: String, contact: UpdateContact) -> Result<Contact> {
+        let id = uuid::Uuid::parse_str(&id)?;
+        let contact = sqlx::query_as::<_, Contact>(
+            "update contacts set 
+                first_name = $1,
+                middle_name: = $2,
+                last_name: = $3,
+                cell_phone_number: = $4,
+                linkedin: = $5,
+                facebook: = $6,
+                twitter: = $7,
+                website: = $8,
+                position = $9,
+                logs: = $10,
+                work_phone = $11,
+                is_active: = $12,
+                last_talked_to: = $13,
+                birthday: = $14,
+                company_name: = $15,
+                company_website: = $16,
+                pic_url: = $17,
+                last_consulted_at: = $18,
+                id_organization = $19,
+                id_note = $20,
+                WHERE id = $17 returning *",
+        )
+        .bind(contact.first_name)
+        .bind(contact.middle_name)
+        .bind(contact.last_name)
+        .bind(contact.cell_phone_number)
+        .bind(contact.linkedin)
+        .bind(contact.facebook)
+        .bind(contact.twitter)
+        .bind(contact.website)
+        .bind(contact.position)
+        .bind(contact.logs)
+        .bind(contact.work_phone)
+        .bind(contact.is_active)
+        .bind(contact.last_talked_to)
+        .bind(contact.birthday)
+        .bind(contact.company_name)
+        .bind(contact.company_website)
+        .bind(contact.pic_url)
+        .bind(contact.last_consulted_at)
+        .bind(contact.id_organization)
+        .bind(contact.id_note)
+        .bind(id)
+        .fetch_one(&*self.pool)
+        .await?;
+        Ok(contact)
     }
 }
 

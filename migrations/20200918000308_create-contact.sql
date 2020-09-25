@@ -25,6 +25,7 @@ CREATE TABLE "contacts"
  "updated_at"        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization"   uuid  NULL,
  "id_note"           uuid NULL,
+ "id_user"           uuid NULL,
 
  CONSTRAINT "PK_contact" PRIMARY KEY ( "id" ),
  CONSTRAINT "FK_organization" FOREIGN KEY ( "id_organization" ) REFERENCES "organizations" ( "id" ),
@@ -40,4 +41,9 @@ CREATE INDEX "fkIdx_organization_on_contacts" ON "contacts"
 CREATE INDEX "fkIdx_note_on_contacts" ON "contacts"
 (
  "id_note"
+);
+
+CREATE INDEX "fkIdx_user_on_contacts" ON "contacts"
+(
+ "id_user"
 );

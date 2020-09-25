@@ -6,3 +6,6 @@ ALTER TABLE tasks
 
 ALTER TABLE appointments
     ADD CONSTRAINT FK_project FOREIGN KEY (id_project) REFERENCES projects (id);
+
+ALTER TABLE contacts
+    ADD CONSTRAINT FK_user FOREIGN KEY (id_user) REFERENCES users (id);
