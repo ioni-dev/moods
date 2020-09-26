@@ -29,7 +29,7 @@ pub async fn create_organization(
             let message = if error_map.contains_key("name") {
                 format!("Invalid name. \"{}\" is too short.", organization.name)
             } else if error_map.contains_key("address") {
-                format!("Invalid address \"{}\"", organization.email)
+                format!("Invalid address \"{:?}\"", organization.email)
             } else {
                 "Invalid input.".to_string()
             };
@@ -38,9 +38,7 @@ pub async fn create_organization(
         }
     }?;
 
-    let result: Result<Organization> = repository
-        .create(organization.0, crypto_service.as_ref())
-        .await;
+    let result: Result<Organization> = repository.create(organization.0).await;
 
     match result {
         Ok(organization) => Ok(HttpResponse::Ok().json(organization)),
@@ -55,14 +53,11 @@ pub async fn create_organization(
                     })?;
 
             let error = match (pg_error.code(), pg_error.column_name()) {
-                (Some(db::UNIQUE_VIOLATION_CODE), Some("email")) => {
-                    AppError::INVALID_INPUT.message("Email address already exists.".to_string())
-                }
                 (Some(db::UNIQUE_VIOLATION_CODE), Some("name")) => {
                     AppError::INVALID_INPUT.message("name already exists.".to_string())
                 }
                 (Some(db::UNIQUE_VIOLATION_CODE), None) => {
-                    AppError::INVALID_INPUT.message("name or email already exists.".to_string())
+                    AppError::INVALID_INPUT.message("name  already exists.".to_string())
                 }
                 _ => {
                     debug!("Error creating organization. {:?}", pg_error);
@@ -75,6 +70,39 @@ pub async fn create_organization(
 }
 
 #[instrument[skip(repository)]]
+pub async fn update_organization(
+    user: AuthenticatedUser,
+    appointment: Json<UpdateOrganization>,
+    id_organization: String,
+    repository: OrganizationRepository,
+) -> AppResponse {
+    match appointment.validate() {
+        Ok(_) => Ok(()),
+        Err(errors) => {
+            let error_map = errors.field_errors();
+
+            let message = if error_map.contains_key("name") {
+                format!("Invalid name, too short",)
+            } else {
+                "Invalid input.".to_string()
+            };
+
+            Err(AppError::INVALID_INPUT.message(message))
+        }
+    }?;
+
+    let organization = repository
+        .update_organization(
+            user.0.to_string(),
+            appointment.0,
+            id_organization.to_string(),
+        )
+        .await?;
+
+    Ok(HttpResponse::Ok().json(organization))
+}
+
+#[instrument[skip(repository)]]
 pub async fn get_all_organizations(repository: OrganizationRepository) -> AppResponse {
     let organizations = repository
         .get_all()
@@ -82,4 +110,18 @@ pub async fn get_all_organizations(repository: OrganizationRepository) -> AppRes
         .ok_or(AppError::INTERNAL_ERROR)?;
 
     Ok(HttpResponse::Ok().json(organizations))
+}
+
+#[instrument[skip(repository)]]
+pub async fn get_organization(
+    user: AuthenticatedUser,
+    id_organization: String,
+    repository: OrganizationRepository,
+) -> AppResponse {
+    let organization = repository
+        .find_by_id(user.0, id_organization)
+        .await?
+        .ok_or(AppError::INTERNAL_ERROR)?;
+
+    Ok(HttpResponse::Ok().json(organization))
 }

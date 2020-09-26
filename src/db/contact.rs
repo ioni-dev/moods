@@ -22,13 +22,14 @@ impl ContactRepository {
     #[instrument(skip(self, new_contact))]
     pub async fn create(&self, new_contact: NewContact) -> Result<Contact> {
         let contact = sqlx::query_as::<_, Contact>(
-            "insert into contacts (first_name, middle_name, last_name, cell_phone_number, linkedin, facebook,  twitter,
+            "insert into contacts (first_name, middle_name, last_name, email, cell_phone_number, linkedin, facebook,  twitter,
                 website, position, logs, work_phone, is_active, last_talked_to, birthday, company_name, company_website, pic_url, last_consulted_at, 
-                id_organization, id_note, id_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) returning *",
+                id_organization, id_note, id_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) returning *",
         )
         .bind(new_contact.first_name)
         .bind(new_contact.middle_name)
         .bind(new_contact.last_name)
+        .bind(new_contact.email)
         .bind(new_contact.cell_phone_number)
         .bind(new_contact.linkedin)
         .bind(new_contact.facebook)
@@ -74,6 +75,7 @@ impl ContactRepository {
                 first_name: contact.first_name,
                 middle_name: contact.middle_name,
                 last_name: contact.last_name,
+                email: contact.email,
                 cell_phone_number: contact.cell_phone_number,
                 linkedin: contact.linkedin,
                 facebook: contact.facebook,
@@ -107,28 +109,30 @@ impl ContactRepository {
                 first_name = $1,
                 middle_name: = $2,
                 last_name: = $3,
-                cell_phone_number: = $4,
-                linkedin: = $5,
-                facebook: = $6,
-                twitter: = $7,
-                website: = $8,
-                position = $9,
-                logs: = $10,
-                work_phone = $11,
-                is_active: = $12,
-                last_talked_to: = $13,
-                birthday: = $14,
-                company_name: = $15,
-                company_website: = $16,
-                pic_url: = $17,
-                last_consulted_at: = $18,
-                id_organization = $19,
-                id_note = $20,
-                WHERE id = $17 returning *",
+                email = $4
+                cell_phone_number: = $5,
+                linkedin: = $6,
+                facebook: = $7,
+                twitter: = $8,
+                website: = $9,
+                position = $10,
+                logs: = $11,
+                work_phone = $12,
+                is_active: = $13,
+                last_talked_to: = $14,
+                birthday: = $15,
+                company_name: = $16,
+                company_website: = $17,
+                pic_url: = $18,
+                last_consulted_at: = $19,
+                id_organization = $20,
+                id_note = $21,
+                WHERE id = $22 returning *",
         )
         .bind(contact.first_name)
         .bind(contact.middle_name)
         .bind(contact.last_name)
+        .bind(contact.email)
         .bind(contact.cell_phone_number)
         .bind(contact.linkedin)
         .bind(contact.facebook)

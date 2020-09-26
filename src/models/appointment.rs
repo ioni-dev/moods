@@ -1,7 +1,6 @@
 use actix_web::{web, App};
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use sqlx::types::Json;
 use uuid::Uuid;
 use validator::Validate;

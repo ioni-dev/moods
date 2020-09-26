@@ -2,9 +2,9 @@ use super::{auth::AuthenticatedUser, AppResponse};
 use crate::{
     config::crypto::CryptoService,
     db,
-    db::event::EventRepository,
+    db::note::NoteRepository,
     errors::AppError,
-    models::event::{Event, NewEvent, UpdateEvent},
+    models::note::{Note, NewNote, UpdateNote},
 };
 use actix_web::{
     web::{Data, Json},

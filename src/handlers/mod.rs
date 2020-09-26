@@ -1,6 +1,7 @@
 mod appointment;
 mod auth;
 mod contact;
+mod note;
 mod organization;
 mod user;
 
@@ -9,7 +10,9 @@ use actix_web::{web, HttpResponse};
 use appointment::{create_appointment, get_all_appointments, get_appointment, update_appointment};
 use auth::auth;
 use contact::{create_contact, get_all_contacts};
-use organization::{create_organization, get_all_organizations};
+use organization::{
+    create_organization, get_all_organizations, get_organization, update_organization,
+};
 use user::{create_user, profile, update_profile};
 type AppResult<T> = Result<T, AppError>;
 type AppResponse = AppResult<HttpResponse>;
@@ -20,6 +23,10 @@ pub fn app_config(config: &mut web::ServiceConfig) {
 
     let all_organizations =
         web::resource("/all-organizations").route(web::get().to(get_all_organizations));
+
+    let organization = web::resource("/organization")
+        .route(web::get().to(get_organization))
+        .route(web::post().to(update_organization));
 
     let signup = web::resource("/signup").route(web::post().to(create_user));
 
@@ -50,6 +57,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .service(create_contact)
         .service(organization_signup)
         .service(all_organizations)
+        .service(organization)
         .service(create_appointment)
         .service(all_appointments)
         .service(appointment);

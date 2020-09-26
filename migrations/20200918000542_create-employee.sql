@@ -10,7 +10,7 @@ CREATE TABLE "employees"
  "active"          boolean NOT NULL default true,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- "id_organization" uuid  NULL,
+ "id_organization" uuid NULL,
  "id_user"         uuid NULL,
 
  CONSTRAINT "PK_employee" PRIMARY KEY ( "id" ),

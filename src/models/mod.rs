@@ -1,5 +1,5 @@
 pub mod appointment;
 pub mod contact;
+pub mod note;
 pub mod organization;
-pub mod post;
 pub mod user;

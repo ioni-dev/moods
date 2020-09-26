@@ -3,22 +3,21 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
+#[derive(Debug, sqlx::FromRow, Serialize, Validate)]
 pub struct Organization {
     pub id: Uuid,
+    #[validate(length(min = 4))]
     pub name: String,
+    #[validate(length(min = 4))]
     pub address: String,
-    pub website: String,
-    pub email: String,
-    #[serde(skip_serializing)]
-    pub password_hash: String,
-    #[serde(skip_serializing)]
-    pub email_verified: bool,
-    pub max_employees: i32,
-    pub max_users: i32,
-    pub phone: String,
-    #[serde(skip_serializing)]
+    pub website: Option<String>,
+    pub email: Option<String>,
+    pub business_type: Option<String>,
+    pub tag: Option<String>,
     pub active: bool,
+    pub phone: Option<String>,
+    pub id_user: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }
 
 #[derive(Debug, Deserialize, Validate)]
@@ -27,13 +26,14 @@ pub struct NewOrganization {
     pub name: String,
     #[validate(length(min = 4))]
     pub address: String,
-    pub website: String,
-    #[validate(email)]
-    pub email: String,
-    pub phone: String,
-    pub password: String,
-    pub max_employees: i32,
-    pub max_users: i32,
+    pub website: Option<String>,
+    pub email: Option<String>,
+    pub business_type: Option<String>,
+    pub tag: Option<String>,
+    pub active: bool,
+    pub phone: Option<String>,
+    pub id_user: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }
 
 #[derive(Debug, Deserialize, Validate)]
@@ -42,9 +42,12 @@ pub struct UpdateOrganization {
     pub name: String,
     #[validate(length(min = 4))]
     pub address: String,
-    pub website: String,
-    pub email: String,
-    pub max_employees: i32,
-    pub max_users: i32,
-    pub phone: String,
+    pub website: Option<String>,
+    pub email: Option<String>,
+    pub business_type: Option<String>,
+    pub tag: Option<String>,
+    pub active: bool,
+    pub phone: Option<String>,
+    pub id_user: Option<Uuid>,
+    pub id_contact: Option<Uuid>,
 }
