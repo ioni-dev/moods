@@ -28,7 +28,7 @@ impl AppointmentRepository {
     pub async fn create(&self, new_appointment: NewAppointment) -> Result<Appointment> {
         let appointment = sqlx::query_as::<_, Appointment>(
             "insert into appointments (name, description, start_date, end_date, meeting_partners, client_attendees, is_completed,
-                id_user, id_note, id_project, id_lead, id_contact) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) returning *",
+                id_user, id_project, id_lead, id_contact) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *",
         )
         .bind(new_appointment.name)
         .bind(new_appointment.description)
@@ -38,7 +38,6 @@ impl AppointmentRepository {
         .bind(new_appointment.client_attendees)
         .bind(new_appointment.is_completed)
         .bind(new_appointment.id_user)
-        .bind(new_appointment.id_note)
         .bind(new_appointment.id_project)
         .bind(new_appointment.id_lead)
         .bind(new_appointment.id_contact)
@@ -60,7 +59,7 @@ impl AppointmentRepository {
 
         let appointment = sqlx::query_as::<_, Appointment>(
             "update appointments set name = $1, description = $2, start_date = $3, end_date = $4, meeting_partners = $5, client_attendees = $6,
-             is_completed = $7, id_user = $8, id_note = $9, id_project = $10, id_lead = $11, id_contact = $12 where id_user = $13 and id = $14 returning *",
+             is_completed = $7, id_user = $8, id_project = $9, id_lead = $10, id_contact = $11 where id_user = $12 and id = $13 returning *",
         )
         .bind(appointment.name)
         .bind(appointment.description)
@@ -70,7 +69,6 @@ impl AppointmentRepository {
         .bind(json!(appointment.client_attendees))
         .bind(appointment.is_completed)
         .bind(appointment.id_user)
-        .bind(appointment.id_note)
         .bind(appointment.id_project)
         .bind(appointment.id_lead)
         .bind(appointment.id_contact)
@@ -134,7 +132,6 @@ impl AppointmentRepository {
                 created_at: appointment.created_at,
                 updated_at: appointment.updated_at,
                 id_user: appointment.id_user,
-                id_note: appointment.id_note,
                 id_project: appointment.id_project,
                 id_lead: appointment.id_lead,
                 id_contact: appointment.id_contact,

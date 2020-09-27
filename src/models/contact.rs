@@ -28,7 +28,6 @@ pub struct Contact {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub id_organization: Option<Uuid>,
-    pub id_note: Option<Uuid>,
     pub id_user: Option<Uuid>,
 }
 
@@ -58,7 +57,6 @@ pub struct NewContact {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub id_organization: Option<Uuid>,
-    pub id_note: Option<Uuid>,
     pub id_user: Option<Uuid>,
 }
 
@@ -88,6 +86,5 @@ pub struct UpdateContact {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub id_organization: Option<Uuid>,
-    pub id_note: Option<Uuid>,
     pub id_user: Option<Uuid>,
 }

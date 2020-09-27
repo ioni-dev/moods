@@ -24,7 +24,7 @@ impl ContactRepository {
         let contact = sqlx::query_as::<_, Contact>(
             "insert into contacts (first_name, middle_name, last_name, email, cell_phone_number, linkedin, facebook,  twitter,
                 website, position, logs, work_phone, is_active, last_talked_to, birthday, company_name, company_website, pic_url, last_consulted_at, 
-                id_organization, id_note, id_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) returning *",
+                id_organization, id_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) returning *",
         )
         .bind(new_contact.first_name)
         .bind(new_contact.middle_name)
@@ -46,7 +46,6 @@ impl ContactRepository {
         .bind(new_contact.pic_url)
         .bind(new_contact.last_consulted_at)
         .bind(new_contact.id_organization)
-        .bind(new_contact.id_note)
         .bind(new_contact.id_user)
         .fetch_one(&*self.pool)
         .await?;
@@ -94,7 +93,6 @@ impl ContactRepository {
                 created_at: contact.created_at,
                 updated_at: contact.updated_at,
                 id_organization: contact.id_organization,
-                id_note: contact.id_note,
                 id_user: contact.id_user,
             })
         }
@@ -126,7 +124,6 @@ impl ContactRepository {
                 pic_url: = $18,
                 last_consulted_at: = $19,
                 id_organization = $20,
-                id_note = $21,
                 WHERE id = $22 returning *",
         )
         .bind(contact.first_name)
@@ -149,7 +146,6 @@ impl ContactRepository {
         .bind(contact.pic_url)
         .bind(contact.last_consulted_at)
         .bind(contact.id_organization)
-        .bind(contact.id_note)
         .bind(id)
         .fetch_one(&*self.pool)
         .await?;

@@ -13,6 +13,8 @@ use contact::{create_contact, get_all_contacts};
 use organization::{
     create_organization, get_all_organizations, get_organization, update_organization,
 };
+
+use note::{create_note, get_all_notes, get_note, update_note};
 use user::{create_user, profile, update_profile};
 type AppResult<T> = Result<T, AppError>;
 type AppResponse = AppResult<HttpResponse>;
@@ -49,6 +51,13 @@ pub fn app_config(config: &mut web::ServiceConfig) {
     let all_appointments =
         web::resource("/all-appointments").route(web::get().to(get_all_appointments));
 
+    let create_note = web::resource("/create-note").route(web::post().to(create_note));
+    let note = web::resource("/note")
+        .route(web::post().to(update_note))
+        .route(web::get().to(get_note));
+
+    let all_notes = web::resource("/all-notes").route(web::get().to(get_all_notes));
+
     config
         .service(signup)
         .service(auth)
@@ -60,5 +69,8 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .service(organization)
         .service(create_appointment)
         .service(all_appointments)
-        .service(appointment);
+        .service(appointment)
+        .service(create_note)
+        .service(note)
+        .service(all_notes);
 }
