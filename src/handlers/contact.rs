@@ -107,3 +107,17 @@ pub async fn update_contact(
 
     Ok(HttpResponse::Ok().json(contact))
 }
+
+#[instrument[skip(repository)]]
+pub async fn get_contact(
+    user: AuthenticatedUser,
+    id_contact: String,
+    repository: ContactRepository,
+) -> AppResponse {
+    let contact = repository
+        .find_by_id(user.0, id_contact)
+        .await?
+        .ok_or(AppError::INTERNAL_ERROR)?;
+
+    Ok(HttpResponse::Ok().json(contact))
+}

@@ -151,6 +151,20 @@ impl ContactRepository {
         .await?;
         Ok(contact)
     }
+
+    #[instrument(skip(self))]
+    pub async fn find_by_id(&self, id_user: Uuid, id_contact: String) -> Result<Option<Contact>> {
+        // let id_user = uuid::Uuid::parse_str(&id_user)?;
+        let id_contact = uuid::Uuid::parse_str(&id_contact)?;
+        let contact =
+            sqlx::query_as::<_, Contact>("select * from contacts where id = $2 and id_user = $1")
+                .bind(id_user)
+                .bind(id_contact)
+                .fetch_optional(&*self.pool)
+                .await?;
+
+        Ok(contact)
+    }
 }
 
 impl FromRequest for ContactRepository {

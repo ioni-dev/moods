@@ -8,6 +8,7 @@ CREATE TABLE "employees"
  "password_hash"   varchar NOT NULL,
  "email_verified"  boolean NOT NULL default false,
  "active"          boolean NOT NULL default true,
+ "position"        varchar NULL,
  "created_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "updated_at"      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  "id_organization" uuid NULL,
