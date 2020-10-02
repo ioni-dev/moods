@@ -45,10 +45,11 @@ impl EmployeeRepository {
 
     pub async fn update_employee(
         &self,
-        id_employee: Uuid,
+        id_employee: String,
         employee: UpdateEmployee,
         hashing: &CryptoService,
     ) -> Result<Employee> {
+        let id_employee = uuid::Uuid::parse_str(&id_employee)?;
         let password_hash = hashing.hash_password(employee.password).await?;
 
         let employee = sqlx::query_as::<_, Employee>(
@@ -74,13 +75,47 @@ impl EmployeeRepository {
     }
 
     #[instrument(skip(self))]
-    pub async fn find_by_id(&self, id: Uuid, id_employee: Uuid) -> Result<Option<Employee>> {
+    pub async fn find_by_id(&self, id_employee: String) -> Result<Option<Employee>> {
+        let id_employee = uuid::Uuid::parse_str(&id_employee)?;
         let maybe_employee = sqlx::query_as::<_, Employee>("select * from employee where id = $1")
-            .bind(id)
+            .bind(id_employee)
             .fetch_optional(&*self.pool)
             .await?;
 
         Ok(maybe_employee)
+    }
+
+    #[instrument(skip(self))]
+    pub async fn get_all(&self, id_user: Uuid) -> Result<Vec<Employee>> {
+        let mut all_employees = vec![];
+
+        let result = sqlx::query!(
+            r#"
+                SELECT *
+                FROM employees
+                where id_user = $1"#,
+            id_user
+        )
+        .fetch_all(&*self.pool)
+        .await?;
+
+        for employee in result {
+            all_employees.push(Employee {
+                id: employee.id,
+                name: employee.name,
+                email: employee.email,
+                password_hash: employee.password_hash,
+                email_verified: employee.email_verified,
+                active: employee.active,
+                created_at: employee.created_at,
+                updated_at: employee.updated_at,
+                id_organization: employee.id_organization,
+                id_user: employee.id_user,
+                position: employee.position,
+            })
+        }
+
+        Ok(all_employees)
     }
 }
 

@@ -21,7 +21,7 @@ pub async fn get_all_employees(
     user: AuthenticatedUser,
     repository: EmployeeRepository,
 ) -> AppResponse {
-    let employees = repository.get_all(user.0.to_string()).await?;
+    let employees = repository.get_all(user.0).await?;
     // .ok_or(AppError::INTERNAL_ERROR);
 
     Ok(HttpResponse::Ok().json(employees))
@@ -85,7 +85,7 @@ pub async fn create_employee(
 pub async fn update_employee(
     user: AuthenticatedUser,
     employee: Json<UpdateEmployee>,
-    id_employee: Uuid,
+    id_employee: String,
     repository: EmployeeRepository,
     crypto_service: Data<CryptoService>,
 ) -> AppResponse {
@@ -116,11 +116,11 @@ pub async fn update_employee(
 #[instrument[skip(repository)]]
 pub async fn get_employee(
     user: AuthenticatedUser,
-    id_employee: Uuid,
+    id_employee: String,
     repository: EmployeeRepository,
 ) -> AppResponse {
     let employee = repository
-        .find_by_id(user.0, id_employee)
+        .find_by_id(id_employee)
         .await?
         .ok_or(AppError::INTERNAL_ERROR)?;
 
