@@ -4,6 +4,7 @@ mod contact;
 mod employee;
 mod note;
 mod organization;
+mod proposal;
 mod user;
 
 use crate::errors::AppError;
@@ -62,6 +63,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .route(web::get().to(get_note));
     let all_notes = web::resource("/all-notes").route(web::get().to(get_all_notes));
 
+    let create_employee = web::resource("/new-employee").route(web::post().to(create_employee));
     let employee = web::resource("/employee")
         .route(web::post().to(update_employee))
         .route(web::get().to(get_employee));
@@ -83,6 +85,7 @@ pub fn app_config(config: &mut web::ServiceConfig) {
         .service(create_note)
         .service(note)
         .service(all_notes)
+        .service(create_employee)
         .service(employee)
         .service(all_employees);
 }
